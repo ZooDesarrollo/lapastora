@@ -1,0 +1,12 @@
+.gd-primary{
+    background:linear-gradient(#03989e, #037176);
+}
+.gd-primary-to-right{
+    background:linear-gradient(to right,#03989e, #037176)!important;
+}
+.v-text-field {
+    .v-label{
+        font-weight: 300!important;
+    }
+    border-radius: 8px!important;
+}

@@ -1,0 +1,26 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "core-js": "^3.15.1",
+    "moment": "^2.29.1",
+    "nuxt": "^2.15.7",
+    "@nuxtjs/auth": "^4.8.4",
+    "@nuxtjs/onesignal": "^3.0.0-beta.16",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "quagga": "^0.12.1",
+    "simple-barcode-scanner": "^2.0.0",
+    "vuetify": "^2.5.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.1"
+  }
+}

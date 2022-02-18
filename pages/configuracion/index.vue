@@ -1,0 +1,211 @@
+<template>
+  <v-container fluid>
+    <v-row>
+      <v-col class="col-12">
+        <v-card class="rounded-xl">
+          <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
+            <v-toolbar-title  class="font-weight-light">
+              Configuraciones
+            </v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-text-field label="Valor cuota general ($)" outlined v-model="configuracion.valor_cuota_general">
+            </v-text-field>
+            <v-text-field label="Valor cuota especial ($)" outlined v-model="configuracion.valor_cuota_general">
+            </v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="gd-primary-to-right" @click="changeConfiguracion()" class="white--text font-weight-light rounded-lg">Guardar configuraciones</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col class="col-12">
+        <v-card class="rounded-xl">
+          <v-toolbar color="gd-primary-to-right white--text" class="elevation-0">
+            <v-toolbar-title class="font-weight-light">
+              Usuarios
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn  class="white--text font-weight-light rounded-lg" color="gd-primary-to-right" @click="openModalUsers = true">Agregar</v-btn>
+          </v-toolbar>
+          <v-card-text>
+            <v-data-table :items="users" :headers="headers" hide-default-footer>
+              <template v-slot:item.edit={item}>
+                <v-btn class="white--text font-weight-light rounded-lg" color="gd-primary-to-right" @click="()=>{
+                        openModalEditUsers = true;
+                        user = item;
+                    }">
+                  Editar
+                </v-btn>
+              </template>
+
+              <template v-slot:item.permisos.atencion={item}>
+                  <v-icon color="success" v-if="item.permisos.atencion">mdi-check</v-icon>
+                  <v-icon color="red" v-else>mdi-close</v-icon>
+              </template>
+              <template v-slot:item.permisos.socios={item}>
+                  <v-icon color="success" v-if="item.permisos.socios">mdi-check</v-icon>
+                  <v-icon color="red" v-else>mdi-close</v-icon>
+              </template>
+
+              <template v-slot:item.permisos.agenda={item}>
+                  <v-icon color="success" v-if="item.permisos.agenda">mdi-check</v-icon>
+                  <v-icon color="red" v-else>mdi-close</v-icon>
+              </template>
+
+              <template v-slot:item.permisos.venta={item}>
+                  <v-icon color="success" v-if="item.permisos.venta">mdi-check</v-icon>
+                  <v-icon color="red" v-else>mdi-close</v-icon>
+              </template>
+
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-snackbar v-model="openSnack">
+      Configuraciones guardadas
+      <v-btn color="white" text @click="openSnack = false">Cerrar</v-btn>
+    </v-snackbar>
+    <v-dialog v-model="openModalUsers">
+      <info-user-component v-model="user">
+        <template v-slot:header>
+          <v-toolbar class="mb-3 elevation-0" color="primary">
+            <v-toolbar-title class="white--text">Agregar usuarios</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="openModalUsers = false" color="white">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar>
+        </template>
+        <template v-slot:button>
+          <v-btn depressed color="primary" @click="addUser()">Agregar</v-btn>
+        </template>
+      </info-user-component>
+    </v-dialog>
+    <v-dialog v-model="openModalEditUsers">
+      <info-user-component v-model="user">
+        <template v-slot:header>
+          <v-toolbar class="mb-3 elevation-0" color="primary">
+            <v-toolbar-title class="white--text">Editar usuario</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="()=>{
+                openModalEditUsers = false;
+                user = {};
+                }" color="white">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar>
+        </template>
+        <template v-slot:button>
+          <v-btn depressed color="primary" @click="updateUser()">Editar</v-btn>
+        </template>
+      </info-user-component>
+    </v-dialog>
+
+  </v-container>
+</template>
+
+<script>
+  import InfoUserComponent from '~/components/usuarios/infoUserComponent.vue'
+  export default {
+    components: {
+      InfoUserComponent
+    },
+    data() {
+
+      return {
+        openModalUsers: false,
+        openModalEditUsers: false,
+        user: {
+          permisos: {}
+        },
+        configuracion: {},
+        openSnack: false,
+        headers: [{
+          value: 'username',
+          text: 'CI',
+        },{
+          text: 'Editar socios',
+          value: 'permisos.socios',
+          align: 'left'
+        },{
+          text: 'Crear atencion',
+          value: 'permisos.atencion',
+          align: 'left'
+        },{
+          text: 'Usar agenda',
+          value: 'permisos.agenda',
+          align: 'left'
+        },{
+          text: 'Agregar venta',
+          value: 'permisos.venta',
+          align: 'left'
+        }, {
+          value: 'edit',
+          text: 'Editar',
+          align: 'right'
+        }],
+        users: []
+      }
+    },
+    created() {
+      this.getConfiguracion()
+      this.getUsers()
+    },
+    methods: {
+      getConfiguracion() {
+        this.$axios.get('/configuracions')
+          .then(response => {
+            this.configuracion = response.data[response.data.length - 1] || {}
+          })
+          .catch(error => {
+            console.log(error);
+          })
+      },
+      changeConfiguracion() {
+        this.$axios.post('/configuracions', this.configuracion)
+          .then(() => {
+            this.openSnack = true
+          })
+      },
+      getUsers() {
+        this.$axios.get('/users', {
+            params: {
+              rol: 'Administrador'
+            }
+          })
+          .then(response => {
+            this.users = response.data
+          })
+          .catch(error => {
+            console.log(error);
+          })
+      },
+      addUser() {
+        this.user.rol = "Administrador"
+        this.user.email = this.user.username + '@gmail.com'
+        this.$axios.post('/users', this.user)
+          .then(() => {
+            this.getUsers()
+            this.openModalUsers = false
+          })
+      },
+      updateUser() {
+        this.$axios.put(`/users/${this.user.id}`, this.user)
+          .then(() => {
+            this.getUsers()
+            this.openModalEditUsers = false
+            this.user = {}
+          })
+      }
+    }
+  }
+
+</script>
+
+<style>
+
+</style>

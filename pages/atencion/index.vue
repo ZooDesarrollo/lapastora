@@ -1,0 +1,360 @@
+<template>
+  <v-container fluid>
+    <v-row>
+      <v-col class="col-12 col-md-12">
+        <v-card class="rounded-xl">
+          <v-toolbar color="gd-primary-to-right" elevation="0" class="white--text">
+            <v-toolbar-title class="font-weight-light">Nueva atencion</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text class="pa-4 rounded-lg">
+            <v-row>
+              <v-col class="col-md-4 col-12">
+                <v-row>
+                  <v-col class="col-md-12 col-12">
+                    <v-text-field label="NOMBRE" readonly solo dense filled v-model="atencion.socio.name"
+                      class="rounded-lg white--text"> </v-text-field>
+                    <v-text-field label="NRO CLIENTE" readonly solo filled dense v-model="atencion.socio.id"
+                      class="rounded-lg white--text"> </v-text-field>
+                    <v-text-field label="APELLIDO" readonly solo dense filled v-model="atencion.socio.last_name"
+                      class="rounded-lg white--text"> </v-text-field>
+                    <v-text-field label="DIRECCION" readonly solo dense filled v-model="atencion.socio.address"
+                      class="rounded-lg white--text"> </v-text-field>
+                    <v-text-field label="TELEFONO" readonly hide-details filled v-model="atencion.socio.phone" solo
+                      dense class="rounded-lg white--text"> </v-text-field>
+                  </v-col>
+                  <v-col class="col-12 d-flex justify-space-between">
+                    <v-row>
+                      <v-col class="col-6">
+                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg" @click="()=>{
+                      openModalListSocios = true
+                      }">BUSCAR</v-btn>
+                      </v-col>
+                      <v-col class="col-6">
+                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg" @click="()=>{
+                      createSocioModal = true;
+                      }">NUEVO CLIENTE</v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col class="col-md-4 col-12">
+                <v-card outlined class="rounded-xl">
+                  <v-data-table show-select single-select v-model="selectedMascota" :items="atencion.socio.mascotas"
+                    hide-default-footer :headers="headersMascotas">
+
+                  </v-data-table>
+                </v-card>
+              </v-col>
+              <v-col class="col-md-4 col-12">
+                <v-text-field label="RAZA" readonly v-model="atencion.mascota.raza" solo dense
+                  class="rounded-lg white--text"> </v-text-field>
+                <v-text-field label="COLOR" readonly solo v-model="atencion.mascota.color" dense
+                  class="rounded-lg white--text"> </v-text-field>
+                <v-select :items="[{
+                      text:'Macho',
+                      value: 'F'
+                    },{
+                      text:'Hembra',
+                      value: 'M'
+                    },{
+                      text:'Otro',
+                      value: 'NN'
+                    }]" label="SEXO" solo dense v-model="atencion.mascota.sexo" readonly
+                  class="rounded-lg white--text">
+                </v-select>
+                <v-text-field label="EDAD" readonly solo dense v-model="atencion.mascota.edad"
+                  class="rounded-lg white--text"> </v-text-field>
+                <v-text-field type="date" label="DECESO" readonly solo dense v-model="atencion.mascota.deceso"
+                  class="rounded-lg white--text"> </v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col class="col-12">
+        <v-card class="rounded-xl">
+          <v-toolbar color="gd-primary-to-right" elevation="0">
+            <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn outlined class="mr-2 white--text font-weight-light"
+              :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id" color="primary"
+              @click="()=>{
+                      modalAtencion = true}">
+              Nueva visita
+            </v-btn>
+            <v-btn outlined class="mr-2 white--text font-weight-light" :disabled="selectedAtencion.length==0"
+              color="primary" @click="()=>{
+                      modalUpdateAtencion = true}">
+              Modificar visita
+            </v-btn>
+            <v-btn outlined class="white--text font-weight-light" :disabled="selectedAtencion.length==0" color="primary"
+              @click="deleteMascota()">
+              Eliminar visita
+            </v-btn>
+          </v-toolbar>
+          <v-card-text class="pa-4 rounded-lg">
+            <v-card outlined class="rounded-xl">
+              <v-data-table show-select single-select v-model="selectedAtencion" :headers="headers" hide-default-footer
+                :items="consultaItems">
+                <template v-slot:item.fecha="{ item }">
+                  {{formatDate(item.fecha)}}
+                </template>
+                <template v-slot:item.hora="{ item }">
+                  {{formatHour(item.hora)}}
+                </template>
+              </v-data-table>
+            </v-card>
+          </v-card-text>
+          <v-card-actions>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="createSocioModal" width="80%" height="auto">
+      <v-card>
+        <v-toolbar class="elevation-0" color="primary">
+          <v-toolbar-title class="white--text font-weight-thin">NUEVO SOCIO</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click.native="createSocioModal = false">
+            <v-icon color="white">mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text class="pa-4">
+          <formSociosComponent :handler="createSocio" v-model="socio"></formSociosComponent>
+        </v-card-text>
+        <v-divider></v-divider>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="openModalListSocios">
+      <listSociosComponent>
+        <template v-slot:button="{ item }">
+          <v-btn outlined @click="($e)=>{
+            atencion.socio = item;
+            openModalListSocios = false;
+        }" color="primary">
+            AGREGAR
+          </v-btn>
+        </template>
+      </listSociosComponent>
+    </v-dialog>
+    <v-dialog v-model="modalAtencion" width="80%" height="auto" persistent>
+      <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
+        <v-toolbar-title>NUEVA VISITA</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="modalAtencion = false">
+          <v-icon color="white">mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <visitas-data-component v-model="atencion" :handler="createAtencion" :mascota="mascota" @changeMascota="($e)=>{
+            mascota = $e
+          }"></visitas-data-component>
+    </v-dialog>
+    <v-dialog v-model="modalUpdateAtencion" width="80%" height="auto" persistent>
+      <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
+        <v-toolbar-title>EDITAR VISITA</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="modalUpdateAtencion = false">
+          <v-icon color="white">mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <visitas-data-component v-model="atencion" :handler="updateAtencion" :mascota="mascota" @changeMascota="($e)=>{
+              mascota = $e
+            }"></visitas-data-component>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+  import moment from 'moment'
+  import FormSociosComponent from '~/components/socios/formSociosComponent.vue'
+  import listSociosComponent from '~/components/socios/listSociosComponent.vue'
+  import VisitasDataComponent from '~/components/visitas/visitasDataComponent.vue'
+  export default {
+    components: {
+      FormSociosComponent,
+      listSociosComponent,
+      VisitasDataComponent
+    },
+    data() {
+      return {
+        atencion: {
+          socio: {
+            mascotas: []
+          },
+          mascota: {},
+          productos: []
+        },
+        socio: {
+          user: {},
+          mascotas: [{}]
+        },
+        selectedAtencion: [],
+        consultaItems: [],
+        modalAtencion: false,
+        modalUpdateAtencion: false,
+        selectedMascota: [],
+        mascota: {},
+        headersMascotas: [{
+          text: 'ID Paciente',
+          value: 'id',
+        }, {
+          text: "Paciente",
+          value: "nombre"
+        }],
+        headers: [{
+          text: "Fecha",
+          value: "fecha"
+        }, {
+          text: "Hora",
+          value: "hora"
+        }, {
+          text: "EOG",
+          value: "EOG"
+        }, {
+          text: "Anamnesis",
+          value: "anamnesis"
+        }, {
+          text: "Diagnostico",
+          value: "diagnostico"
+        }, {
+          text: "Pronostico",
+          value: "pronostico"
+        }, {
+          text: "Tratamiento",
+          value: "tratamiento"
+        }],
+        openModalListSocios: false,
+        createSocioModal: false,
+        patologiasList: [
+          'Patologia 1',
+          'Patologia 2',
+          'Patologia 3',
+        ],
+        patologia: null
+      }
+    },
+    methods: {
+      async createSocio() {
+        if (!this.socio.user.email) {
+          this.socio.user.email = `${this.socio.user.username}@gmail.com`
+        }
+        await this.$axios.post('/mascotas/createMultiple', this.socio.mascotas)
+          .then((data) => {
+            this.socio.mascotas = data.data
+          })
+        const user = (await this.$axios.post('users/', this.socio.user)).data.id
+        this.socio.user = user
+        await this.$axios.post('/socios', this.socio).then(response => {
+          this.atencion.socio = response.data
+          this.socio = {
+            user: {},
+            mascotas: [{}]
+          }
+          this.$forceUpdate()
+          this.createSocioModal = false;
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      cleanSocio() {
+        console.log(this.atencion);
+        this.consultaItems = []
+        this.selectedAtencion = []
+        this.selectedMascota = []
+      },
+      createAtencion() {
+        this.atencion.hora = `${this.atencion.hora}:00.000`
+        this.$axios.post('/atencion', this.atencion).then(response => {
+          this.getAtencionMascota(this.atencion.mascota)
+          this.formatAtencion()
+          this.modalAtencion = false
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      updateAtencion() {
+
+        this.$axios.put('/atencion/' + this.atencion.id, this.atencion).then(async response => {
+          await this.getAtencionMascota(this.atencion.mascota)
+          this.formatAtencion()
+          await this.updateMascota()
+          this.modalUpdateAtencion = false
+          this.selectedAtencion = []
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      formatAtencion() {
+        this.atencion.EOG = ""
+        this.atencion.anamnesis = ""
+        this.atencion.diagnostico = ""
+        this.atencion.pronostico = ""
+        this.atencion.tratamiento = ""
+        this.atencion.hora = ""
+        this.atencion.fecha = ""
+        this.atencion.id = null
+      },
+      updateMascota() {
+        this.$axios.put('/mascotas/' + this.mascota.id, this.mascota).then(response => {}).catch(error => {
+          console.log(error);
+        });
+      },
+      getAtencionMascota(mascota) {
+        this.$axios.get(`/atencion?mascota=${mascota.id}`, this.atencion)
+          .then(response => {
+            this.consultaItems = response.data
+          })
+      },
+      deleteMascota() {
+        this.$axios.delete(`/atencion/${this.atencion.id}`)
+          .then(() => {
+            this.getAtencionMascota(this.atencion.mascota)
+            this.selectedAtencion = []
+          })
+      },
+      deletePatologia(index) {
+        this.$delete(this.atencion.patologias, index);
+      },
+      addPatologia() {
+        this.atencion.patologias.push({
+          nombre: this.patologia
+        });
+      },
+      formatDate(date) {
+        let finalDate = date.split('-')
+        return `${finalDate[2]}/${finalDate[1]}/${finalDate[0]}`
+      },
+      formatHour(hour) {
+        let finalHour = hour.split(':')
+        return `${finalHour[0]}:${finalHour[1]}`
+      },
+
+    },
+    watch: {
+      selectedMascota(val) {
+        if (val.length == 0) {
+          this.atencion.mascota = {}
+          this.consultaItems = []
+        } else {
+          this.atencion.mascota = val[0]
+          this.atencion.mascota.edad = moment().diff(this.atencion.mascota.fecha_nac, 'years')
+          this.mascota = val[0]
+          this.getAtencionMascota(val[0])
+        }
+      },
+      selectedAtencion(val) {
+        if (val.length > 0) {
+          this.atencion = JSON.parse(JSON.stringify(val[0]))
+        } else {
+          this.formatAtencion()
+        }
+      }
+    }
+  }
+
+</script>
+
+<style>
+
+</style>
