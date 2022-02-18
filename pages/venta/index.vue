@@ -65,19 +65,19 @@
                 <v-card-text v-else>
                   <v-row>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Nombre" :rules="rules.required" v-model="venta.cliente.nombre">
+                      <v-text-field solo label="Nombre"  v-model="venta.cliente.nombre">
                       </v-text-field>
                     </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Apellido" :rules="rules.required" v-model="venta.cliente.apellido">
+                      <v-text-field solo label="Apellido" v-model="venta.cliente.apellido">
                       </v-text-field>
                     </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Direccion" :rules="rules.required" v-model="venta.cliente.direccion">
+                      <v-text-field solo label="Direccion" v-model="venta.cliente.direccion">
                       </v-text-field>
                     </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Telefono" :rules="rules.required" v-model="venta.cliente.telefono"></v-text-field>
+                      <v-text-field solo label="Telefono" v-model="venta.cliente.telefono"></v-text-field>
                     </v-col>
 
                   </v-row>
@@ -124,7 +124,7 @@
                     </v-text-field>
                   </v-col>
                   <v-col>
-                    <v-text-field type="number" v-model="producto.precio" filled readonly
+                    <v-text-field type="number" v-model="producto.precio" filled :readonly="producto.tipo == 'consulta'"
                       prepend-inner-icon="mdi-currency-usd" label="Precio unidad" solo dense></v-text-field>
                   </v-col>
                   <v-col class="col-md-3 col-12">
@@ -316,7 +316,7 @@
         if (tipo == 'consulta') {
           this.producto = {
             nombre: 'Consulta',
-            precio: 500,
+            precio: 0,
             cantidad: 1,
             descuento: 0,
             tipo: tipo,
