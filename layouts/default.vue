@@ -157,7 +157,7 @@
 
   .btn-navigation {
     border: 1px solid #80808024;
-    border-radius: 30px;
+    border-radius: 30px!important;
     padding: 0 !important;
 
     span {
