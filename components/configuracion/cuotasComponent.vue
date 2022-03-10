@@ -45,7 +45,7 @@
           <v-btn small class="white--text font-weight-light rounded-lg" @click="setDefaultCuota(item)" color="gd-primary-to-right">
             Cuota base <v-icon>mdi-check</v-icon>
           </v-btn>
-          <v-btn small class="white--text font-weight-light rounded-lg" color="red" @click="deleteCuotas(item.id)">
+          <v-btn small class="white--text font-weight-light rounded-lg" color="red" @click="deleteCuota(item.id)">
             Eliminar <v-icon>mdi-delete</v-icon>
           </v-btn>
 
