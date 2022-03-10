@@ -47,7 +47,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://159.223.135.167:1337',
+    baseURL: 'https://api.abunda.uy',
     //baseURL: 'http://localhost:1337/'
   },
   auth: {
