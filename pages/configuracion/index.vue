@@ -4,64 +4,66 @@
       <v-col class="col-12">
         <v-card class="rounded-xl">
           <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
-            <v-toolbar-title  class="font-weight-light">
-              Configuraciones
+            <v-toolbar-title class="font-weight-light">
+              Configuracion
             </v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-text-field label="Valor cuota general ($)" outlined v-model="configuracion.valor_cuota_general">
-            </v-text-field>
-            <v-text-field label="Valor cuota especial ($)" outlined v-model="configuracion.valor_cuota_general">
-            </v-text-field>
+            <configuracionCuotasComponent></configuracionCuotasComponent>
+          </v-card-text>
+          <v-card-text>
+            <v-card class="rounded-xl" outlined>
+              <v-toolbar color="gd-primary-to-right white--text" class="elevation-0">
+                <v-toolbar-title class="font-weight-light">
+                  Usuarios
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn class="white--text font-weight-light rounded-lg" color="gd-primary-to-right"
+                  @click="openModalUsers = true">Agregar</v-btn>
+              </v-toolbar>
+              <v-card-text>
+                <v-data-table :items="users" :headers="headers" hide-default-footer>
+                  <template v-slot:item.edit={item}>
+                    <v-btn class="white--text font-weight-light rounded-lg" color="gd-primary-to-right" @click="()=>{
+                        openModalEditUsers = true;
+                        user = item;
+                    }">
+                      Editar
+                    </v-btn>
+                  </template>
+
+                  <template v-slot:item.permisos.atencion={item}>
+                    <v-icon color="success" v-if="item.permisos.atencion">mdi-check</v-icon>
+                    <v-icon color="red" v-else>mdi-close</v-icon>
+                  </template>
+                  <template v-slot:item.permisos.socios={item}>
+                    <v-icon color="success" v-if="item.permisos.socios">mdi-check</v-icon>
+                    <v-icon color="red" v-else>mdi-close</v-icon>
+                  </template>
+
+                  <template v-slot:item.permisos.agenda={item}>
+                    <v-icon color="success" v-if="item.permisos.agenda">mdi-check</v-icon>
+                    <v-icon color="red" v-else>mdi-close</v-icon>
+                  </template>
+
+                  <template v-slot:item.permisos.venta={item}>
+                    <v-icon color="success" v-if="item.permisos.venta">mdi-check</v-icon>
+                    <v-icon color="red" v-else>mdi-close</v-icon>
+                  </template>
+
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="gd-primary-to-right" @click="changeConfiguracion()" class="white--text font-weight-light rounded-lg">Guardar configuraciones</v-btn>
+            <v-btn color="gd-primary-to-right" @click="changeConfiguracion()"
+              class="white--text font-weight-light rounded-lg">Guardar configuraciones</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col class="col-12">
-        <v-card class="rounded-xl">
-          <v-toolbar color="gd-primary-to-right white--text" class="elevation-0">
-            <v-toolbar-title class="font-weight-light">
-              Usuarios
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn  class="white--text font-weight-light rounded-lg" color="gd-primary-to-right" @click="openModalUsers = true">Agregar</v-btn>
-          </v-toolbar>
-          <v-card-text>
-            <v-data-table :items="users" :headers="headers" hide-default-footer>
-              <template v-slot:item.edit={item}>
-                <v-btn class="white--text font-weight-light rounded-lg" color="gd-primary-to-right" @click="()=>{
-                        openModalEditUsers = true;
-                        user = item;
-                    }">
-                  Editar
-                </v-btn>
-              </template>
-
-              <template v-slot:item.permisos.atencion={item}>
-                  <v-icon color="success" v-if="item.permisos.atencion">mdi-check</v-icon>
-                  <v-icon color="red" v-else>mdi-close</v-icon>
-              </template>
-              <template v-slot:item.permisos.socios={item}>
-                  <v-icon color="success" v-if="item.permisos.socios">mdi-check</v-icon>
-                  <v-icon color="red" v-else>mdi-close</v-icon>
-              </template>
-
-              <template v-slot:item.permisos.agenda={item}>
-                  <v-icon color="success" v-if="item.permisos.agenda">mdi-check</v-icon>
-                  <v-icon color="red" v-else>mdi-close</v-icon>
-              </template>
-
-              <template v-slot:item.permisos.venta={item}>
-                  <v-icon color="success" v-if="item.permisos.venta">mdi-check</v-icon>
-                  <v-icon color="red" v-else>mdi-close</v-icon>
-              </template>
-
-            </v-data-table>
-          </v-card-text>
-        </v-card>
       </v-col>
     </v-row>
 
@@ -127,19 +129,19 @@
         headers: [{
           value: 'username',
           text: 'CI',
-        },{
+        }, {
           text: 'Editar socios',
           value: 'permisos.socios',
           align: 'left'
-        },{
+        }, {
           text: 'Crear atencion',
           value: 'permisos.atencion',
           align: 'left'
-        },{
+        }, {
           text: 'Usar agenda',
           value: 'permisos.agenda',
           align: 'left'
-        },{
+        }, {
           text: 'Agregar venta',
           value: 'permisos.venta',
           align: 'left'

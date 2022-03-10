@@ -1,6 +1,8 @@
 <template>
   <v-container fluid>
-    <formSociosComponent :handler="createSocio" v-model="socio"></formSociosComponent>
+    <formSociosComponent :handler="createSocio" v-model="socio">
+      Nuevo socio
+    </formSociosComponent>
     <modal-success :action="()=>{
       this.createSocioModal = false
       }" v-model="createSocioModal">

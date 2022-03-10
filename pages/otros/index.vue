@@ -6,11 +6,8 @@
       </v-toolbar>
       <v-card-actions class="pl-5">
         <v-spacer></v-spacer>
-        <v-btn @click="removeItem()" :disabled="items.length<2" outlined>
-          Eliminar&nbsp;<v-icon>mdi-minus</v-icon>
-        </v-btn>
-        <v-btn @click="addItem()" outlined>
-          Agregar&nbsp;<v-icon>mdi-plus</v-icon>    
+        <v-btn color="gd-primary-to-right" class="white--text font-weight-light" @click="addItem()">
+          Agregar noticia&nbsp;<v-icon>mdi-plus</v-icon>    
         </v-btn>
       </v-card-actions>
       <v-divider></v-divider>
@@ -20,6 +17,10 @@
             <v-card class="rounded-xl">
               <v-toolbar class="mb-3 elevation-0" color="gd-primary-to-right" dense>
                 <v-toolbar-title class="white--text font-weight-light">Noticia {{(index + 1)}}</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="deleteOthers(index)" color="white">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
               </v-toolbar>
               <v-card-text class="pa-4 rounded-lg">
                 <v-text-field placeholder="TITULO" v-model="item.title" outlined dense class="rounded-lg">
@@ -87,6 +88,11 @@
         this.$axios.get('/otros').then(response => {
           this.items = response.data
         })
+      },
+      deleteOthers(index) {
+        console.log(index)
+        this.$delete(this.items.otros,index)
+        console.log(this.items)
       },
       onFileChange(pic, e) {
         return pic = e.target.files[0]

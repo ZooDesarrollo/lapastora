@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <v-autocomplete class="font-weight-light" :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
+    <v-autocomplete full-width class="font-weight-light" :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
       hide-no-data item-value="id" item-text="name" placeholder="Buscar socios..." solo
       :outlined="outlined" :rounded="rounded" background-color="white" v-model="result" 
       @keyup.enter="result = search">
@@ -12,7 +11,6 @@
         </v-slide-x-reverse-transition>
       </template>
     </v-autocomplete>
-  </div>
 </template>
 <script>
   /* eslint-disable */

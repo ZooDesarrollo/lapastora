@@ -25,12 +25,14 @@
                   <v-col class="col-12 d-flex justify-space-between">
                     <v-row>
                       <v-col class="col-6">
-                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg" @click="()=>{
+                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
+                          @click="()=>{
                       openModalListSocios = true
                       }">BUSCAR</v-btn>
                       </v-col>
                       <v-col class="col-6">
-                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg" @click="()=>{
+                        <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
+                          @click="()=>{
                       createSocioModal = true;
                       }">NUEVO CLIENTE</v-btn>
                       </v-col>
@@ -77,19 +79,19 @@
           <v-toolbar color="gd-primary-to-right" elevation="0">
             <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn outlined class="mr-2 white--text font-weight-light"
-              :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id" color="primary"
-              @click="()=>{
+            <v-btn class="mr-2 white--text font-weight-light"
+              :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id"
+              color="gd-primary-to-right" @click="()=>{
                       modalAtencion = true}">
               Nueva visita
             </v-btn>
-            <v-btn outlined class="mr-2 white--text font-weight-light" :disabled="selectedAtencion.length==0"
-              color="primary" @click="()=>{
+            <v-btn class="mr-2 white--text font-weight-light" :disabled="selectedAtencion.length==0"
+              color="gd-primary-to-right" @click="()=>{
                       modalUpdateAtencion = true}">
               Modificar visita
             </v-btn>
-            <v-btn outlined class="white--text font-weight-light" :disabled="selectedAtencion.length==0" color="primary"
-              @click="deleteMascota()">
+            <v-btn class="white--text font-weight-light" :disabled="selectedAtencion.length==0"
+              color="gd-primary-to-right" @click="deleteMascota()">
               Eliminar visita
             </v-btn>
           </v-toolbar>
@@ -127,7 +129,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="openModalListSocios">
-      <listSociosComponent>
+      <SociosListSociosComponent v-model="sociosList">
         <template v-slot:button="{ item }">
           <v-btn outlined @click="($e)=>{
             atencion.socio = item;
@@ -136,7 +138,7 @@
             AGREGAR
           </v-btn>
         </template>
-      </listSociosComponent>
+      </SociosListSociosComponent>
     </v-dialog>
     <v-dialog v-model="modalAtencion" width="80%" height="auto" persistent>
       <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
@@ -168,12 +170,10 @@
 <script>
   import moment from 'moment'
   import FormSociosComponent from '~/components/socios/formSociosComponent.vue'
-  import listSociosComponent from '~/components/socios/listSociosComponent.vue'
   import VisitasDataComponent from '~/components/visitas/visitasDataComponent.vue'
   export default {
     components: {
       FormSociosComponent,
-      listSociosComponent,
       VisitasDataComponent
     },
     data() {
@@ -189,6 +189,7 @@
           user: {},
           mascotas: [{}]
         },
+        sociosList: [],
         selectedAtencion: [],
         consultaItems: [],
         modalAtencion: false,
@@ -234,7 +235,19 @@
         patologia: null
       }
     },
+    created() {
+      this.getSocios()
+    },
     methods: {
+      getSocios() {
+        this.$axios.get('/socios')
+          .then(response => {
+            this.sociosList = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       async createSocio() {
         if (!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`

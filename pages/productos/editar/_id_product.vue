@@ -6,8 +6,8 @@
           <v-col class="col-12 col-md-5">
             <v-row>
               <v-col class="col-12 col-md-6">
-                <v-text-field label="CODIGO" type="number" v-model="product.codigo" class="rounded-lg"
-                  outlined></v-text-field>
+                <v-text-field label="CODIGO" type="number" v-model="product.codigo" class="rounded-lg" outlined>
+                </v-text-field>
                 <v-card color="blue darken--5" class="rounded-lg elevation-0" height="400">
                   <v-card-text>
                     <input id="fileUpload" type="file" @input="onFileChange($event)" ref="file" hidden>
@@ -20,18 +20,18 @@
                 <v-text-field label="NOMBRE MASCOTA" class="rounded-lg" outlined></v-text-field>
                 <v-text-field label="NOMBRE" v-model="product.nombre" class="rounded-lg" outlined>
                 </v-text-field>
-                <v-text-field label="COSTO/UNIDAD" type="number" v-model="product.precio_unidad"
-                  class="rounded-lg" outlined></v-text-field>
-                <v-text-field label="COSTO/TOTAL" type="number" v-model="product.precio_total"
-                  class="rounded-lg" outlined></v-text-field>
-                <v-text-field label="PRECIO FINAL" type="number" v-model="product.precio_final"
-                  class="rounded-lg" outlined></v-text-field>
-                <v-text-field label="DISTRIBUIDOR" v-model="product.distribuidor" class="rounded-lg"
+                <v-text-field label="COSTO/UNIDAD" type="number" v-model="product.precio_unidad" class="rounded-lg"
                   outlined></v-text-field>
-                <v-text-field label="FECHA DE COMPRA" type="date" v-model="product.fecha_compra"
-                  class="rounded-lg" outlined></v-text-field>
-                <v-text-field label="VENCIMIENTO" type="date" v-model="product.vencimiento"
-                  class="rounded-lg" outlined></v-text-field>
+                <v-text-field label="COSTO/TOTAL" type="number" v-model="product.precio_total" class="rounded-lg"
+                  outlined></v-text-field>
+                <v-text-field label="PRECIO FINAL" type="number" v-model="product.precio_final" class="rounded-lg"
+                  outlined></v-text-field>
+                <v-text-field label="DISTRIBUIDOR" v-model="product.distribuidor" class="rounded-lg" outlined>
+                </v-text-field>
+                <v-text-field label="FECHA DE COMPRA" type="date" v-model="product.fecha_compra" class="rounded-lg"
+                  outlined></v-text-field>
+                <v-text-field label="VENCIMIENTO" type="date" v-model="product.vencimiento" class="rounded-lg" outlined>
+                </v-text-field>
 
               </v-col>
             </v-row>
@@ -64,6 +64,8 @@
         </p>
       </template>
     </modal-success>
+    <productosCreateDistribuidoresComponent v-model="product.distribuidor">
+    </productosCreateDistribuidoresComponent>
   </v-container>
 </template>
 
@@ -76,7 +78,8 @@
     data() {
       return {
         product: {},
-        dialog: false
+        dialog: false,
+        dialogDistribuidores: false
       }
     },
     mounted() {
@@ -84,10 +87,10 @@
     },
     methods: {
       getProduct() {
-          this.$axios.get(`/productos/${this.$route.params.id_product}`)
-            .then(response => {
-              this.product = response.data
-            })
+        this.$axios.get(`/productos/${this.$route.params.id_product}`)
+          .then(response => {
+            this.product = response.data
+          })
       },
       selectPicture() {
         this.$refs.file.click();
@@ -104,8 +107,8 @@
       },
       async editProduct() {
         let data = new FormData();
-        if(this.product.foto) {
-            data.append('files.foto', this.product.foto);
+        if (this.product.foto) {
+          data.append('files.foto', this.product.foto);
         }
         data.append('data', JSON.stringify(this.product));
         this.$axios.put(`/productos/${this.product.id}`, data)

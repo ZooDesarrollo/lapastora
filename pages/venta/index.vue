@@ -77,7 +77,8 @@
                       </v-text-field>
                     </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Telefono" :rules="rules.required" v-model="venta.cliente.telefono"></v-text-field>
+                      <v-text-field solo label="Telefono" :rules="rules.required" v-model="venta.cliente.telefono">
+                      </v-text-field>
                     </v-col>
 
                   </v-row>
@@ -91,7 +92,7 @@
               <v-divider></v-divider>
               <v-card-text>
                 <v-row>
-                  <v-col>
+                  <v-col class="col-md-3 col-12">
                     <v-input>
                       <v-text-field hide-details filled readonly label="Articulo" prepend-inner-icon="mdi-cart"
                         v-model="producto.nombre" class="rounded-r-0" solo dense></v-text-field>
@@ -194,7 +195,7 @@
             <template v-slot:title>
               Consultas pendientes de pago
             </template>
-            <template  v-slot:button="{ item }">
+            <template v-slot:button="{ item }">
               <v-btn class="rounded-lg" color="success darken-1 font-weight-light" @click="setItem(item, 'consulta')">
                 <span>Seleccionar consulta</span>
                 <v-icon>mdi-cart-plus</v-icon>
@@ -320,7 +321,8 @@
             cantidad: 1,
             descuento: 0,
             tipo: tipo,
-            codigo: 'P'+item.id
+            codigo: 'P' + item.id,
+            productos: item.productos
           }
         } else {
           this.producto = {
@@ -329,7 +331,7 @@
             cantidad: 1,
             descuento: 0,
             tipo: tipo,
-            codigo: 'C'+item.id
+            codigo: 'C' + item.id
 
           }
         }
@@ -340,6 +342,19 @@
       },
       addProduct() {
         this.$set(this.venta.productos, this.venta.productos.length, this.producto)
+        if (this.producto.tipo == 'consulta') {
+          this.producto.productos.filter((item) => {
+            console.log(item)
+            this.$set(this.venta.productos, this.venta.productos.length, {
+              nombre: item.producto.nombre,
+              precio: item.precio * item.cant,
+              cantidad: 1,
+              descuento: 0,
+              tipo: 'producto',
+              codigo: 'C' + item.id
+            })
+          })
+        }
         this.producto = {}
       },
       removeProduct(index) {
@@ -350,9 +365,13 @@
         this.$axios.post('/ventas', this.venta)
           .then(() => {
             this.showVentasList = false
-            setTimeout(() => {
-              this.showVentasList = true
-            }, 500);
+            this.venta = {
+                cliente: {},
+                productos: []
+              },
+              setTimeout(() => {
+                this.showVentasList = true
+              }, 500);
           })
       },
     },

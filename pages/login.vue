@@ -49,7 +49,7 @@
         try {
           await this.$auth.loginWith("local", {
             data: {
-              username: this.user.username,
+              identifier: this.user.username,
               password: this.user.password
             }
           });

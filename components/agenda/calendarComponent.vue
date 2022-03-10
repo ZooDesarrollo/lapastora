@@ -81,6 +81,7 @@
         data: {},
         editable: false
       },
+      changedMonths:0,
       type: 'month',
       selectedEditable: false,
       selectedElement: null,
@@ -108,11 +109,16 @@
       },
       prev() {
         this.$refs.calendar.prev()
-        this.$emit('prev', this.$refs.calendar.value)
+        this.changedMonths--
+        let date = moment(this.now).add(this.changedMonths,'months').endOf('month').format('YYYY-MM-DD')
+        this.$emit('prev', date)
       },
       next() {
         this.$refs.calendar.next()
-        this.$emit('next', this.$refs.calendar.value)
+        this.changedMonths++
+        let date = moment(this.now).add(this.changedMonths,'months').endOf('month').format('YYYY-MM-DD')
+        console.log(date)
+        this.$emit('next', date)
       },
       showEvent({
         nativeEvent,

@@ -8,25 +8,10 @@
       <slot name="buttonTitle"></slot>
     </v-toolbar>
     <v-card-title>
-      <!--
-        <v-input hide-details>
-            <v-text-field
-                hide-details
-                v-model="search"
-                label="Buscar"
-                clearable
-                dense
-                outlined
-                class="rounded-r-0"
-            ></v-text-field>
-            <v-btn class="rounded-l-0" depressed height="40" color="primary">
-                <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-        </v-input>
-        -->
+      <slot name="extraFields"></slot>
     </v-card-title>
     <v-card-text>
-      <v-data-table :items="sociosList" :headers="headers" hide-default-footer>
+      <v-data-table :items="value" :headers="headers" hide-default-footer>
         <template v-slot:item.payment_date="{ item }">
           {{formatDate(item.payment_date)}}
         </template>
@@ -41,6 +26,12 @@
 <script>
   import moment from 'moment'
   export default {
+    props:{
+      value:{
+        type:Array,
+        default: () => []
+      }
+    },
     data() {
       return {
         headers: [{
@@ -65,19 +56,7 @@
         search: ""
       }
     },
-    created() {
-      this.getSocios();
-    },
     methods: {
-      getSocios() {
-        this.$axios.get('/socios')
-          .then(response => {
-            this.sociosList = response.data
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
       formatDate(date) {
         return moment(date).format('DD/MM/YYYY')
       },

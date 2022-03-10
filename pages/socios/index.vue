@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <list-socios-component>
+    <SociosListSociosComponent v-model="sociosList">
+      <template v-slot:extraFields>
+        <SociosFindSociosComponent v-model="search.id"></SociosFindSociosComponent>
+      </template>
       <template v-slot:buttonTitle>
         <v-btn to="/socios/registro" class="font-weight-light rounded-lg white--text" color="gd-primary-to-right">
           AGREGAR SOCIO
@@ -19,7 +22,7 @@
           EDITAR
         </v-btn>
       </template>
-    </list-socios-component>
+    </SociosListSociosComponent>
     <v-dialog v-model="openModalPaymentServices">
       <v-card width="600">
         <v-toolbar color="gd-primary-to-right font-weight-light" elevation="0">
@@ -51,12 +54,10 @@
 </template>
 
 <script>
-  import ListSociosComponent from '~/components/socios/listSociosComponent.vue';
   import modalSuccess from '~/components/modalSuccess.vue';
   import moment from 'moment';
   export default {
     components: {
-      ListSociosComponent,
       modalSuccess
     },
     data() {
@@ -66,11 +67,26 @@
         dataPayment:{
           months:1,
           client:{}
-        }
+        },
+        search:{},
+        sociosList: []
       }
     },
-    created() {},
+    created() {
+      this.getSocios()
+    },
     methods: {
+      getSocios() {
+        this.$axios.get('/socios',{
+          params:this.search
+        })
+          .then(response => {
+            this.sociosList = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       payServices() {
         this.dataPayment.client.payment_date=moment().add(this.dataPayment.months,'months').format('YYYY-MM-DD')
         this.$axios.put(`/socios/${this.dataPayment.client.id}`,this.dataPayment.client).then(response => {
@@ -78,6 +94,14 @@
           this.openAlertPayment = false
           this.getSocios();
         })
+      }
+    },
+    watch:{
+      search:{
+        handler(){
+          this.getSocios()
+        },
+        deep:true
       }
     }
   }

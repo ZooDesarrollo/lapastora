@@ -42,26 +42,32 @@
             <v-card outlined>
               <v-card-text>
                 <v-row>
-                  <v-col class="col-md-3 col-12 d-flex justify-center">
+                  <v-col class="d-flex justify-center">
                     <v-icon color="#4caf50">mdi-circle</v-icon>
                     &nbsp;&nbsp;
                     <span class="font-weight-black black--text">Evento</span>
                   </v-col>
-                  <v-col class="col-md-3 col-12 d-flex justify-center">
+                  <v-col class="d-flex justify-center">
                     <v-icon color="blue darken-1">mdi-circle</v-icon>
                     &nbsp;&nbsp;
                     <span class="font-weight-black black--text">Higiene</span>
                   </v-col>
-                  <v-col class="col-md-3 col-12 d-flex justify-center">
+                  <v-col class="d-flex justify-center">
                     <v-icon color="indigo darken-1">mdi-circle</v-icon>
                     &nbsp;&nbsp;
                     <span class="font-weight-black black--text">Consulta</span>
                   </v-col>
-                  <v-col class="col-md-3 col-12 d-flex justify-center">
+                  <v-col class="d-flex justify-center">
                     <v-icon color="orange darken-1">mdi-circle</v-icon>
                     &nbsp;&nbsp;
                     <span class="font-weight-black black--text">Otro</span>
                   </v-col>
+                  <v-col class="d-flex justify-center">
+                    <v-icon color="red darken-1">mdi-circle</v-icon>
+                    &nbsp;&nbsp;
+                    <span class="font-weight-black black--text">Indisponible</span>
+                  </v-col>
+
                 </v-row>
               </v-card-text>
             </v-card>
@@ -82,15 +88,15 @@
         </v-toolbar>
         <v-card-text class="pa-3">
           <v-form ref="form">
-            <v-text-field solo class="rounded-lg" dense :rules="rules.required" v-model="agenda.titulo"
+            <v-text-field solo class="rounded-lg" dense  v-if="agenda.type!='indisponible'" :rules="rules.required" v-model="agenda.titulo"
               label="Nombre del evento"></v-text-field>
             <v-text-field solo class="rounded-lg" dense :rules="rules.required" type="date" v-model="agenda.fecha"
               label="Fecha"></v-text-field>
-            <v-text-field solo class="rounded-lg" dense :rules="rules.required" type="time" v-model="agenda.hora"
+            <v-text-field solo class="rounded-lg" dense  v-if="agenda.type!='indisponible'" :rules="rules.required" type="time" v-model="agenda.hora"
               label="Hora"></v-text-field>
-            <v-textarea solo class="rounded-lg" dense v-model="agenda.detalles" label="Detalle"></v-textarea>
+            <v-textarea solo class="rounded-lg" dense v-if="agenda.type!='indisponible'" v-model="agenda.detalles" label="Detalle"></v-textarea>
             <v-select solo class="rounded-lg" dense
-              :items="[{text:'Consulta',value:'consulta'},{text:'Evento',value:'evento'}]" v-model="agenda.type"
+              :items="[{text:'Consulta',value:'consulta'},{text:'Evento',value:'evento'},{text:'Fecha indisponible',value:'indisponible'}]" v-model="agenda.type"
               label="Tipo de evento"></v-select>
             <div v-if="agenda.type == 'consulta'">
               <v-card outlined>
@@ -239,7 +245,7 @@
           var colorsCalendar = (agenda) => {
             if (agenda.type == 'evento') {
               return '#4caf50'
-            } else {
+            } else if(agenda.type == 'consulta') {
               switch (agenda.consulta.tipo_consulta) {
                 case 'Higiene':
                   return 'blue darken-1';
@@ -253,24 +259,29 @@
                 case 'Otro':
                   return 'orange darken-1';
               }
+            } else {
+              return 'red'
             }
           }
 
 
           this.agendas = data.data.map(agenda => {
+            let date = (agenda.hora) ? agenda.fecha  +" "+ agenda.hora.split('.')[0] : agenda.fecha
             return {
-              name: agenda.titulo,
-              start: agenda.fecha + " " + agenda.hora.split('.')[0],
-              end: agenda.fecha + " " + agenda.hora.split('.')[0],
+              name: agenda.titulo ?? "Fecha no disponible",
+              start: date,
+              end: date,
               color: colorsCalendar(agenda),
-              data: agenda
+              data: agenda,
+              allDay: agenda.type == 'indisponible'
             }
           })
         })
       },
       addAgenda() {
         if (!this.$refs.form.validate()) return
-        this.agenda.hora = this.agenda.hora + ':00.00'
+        if(this.agenda.hora)
+          this.agenda.hora = this.agenda.hora + ':00.00'
         this.$axios.post('/agendas', this.agenda).then(data => {
           this.getAgendas()
           this.modalAgenda = false
