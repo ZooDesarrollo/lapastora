@@ -2,7 +2,7 @@
   <v-card class="rounded-xl">
     <v-toolbar elevation="0" :color="color">
       <v-toolbar-title class="font-weight-light" :class="{'white--text':color!='transparent','black--text':color=='transparent'}">
-        Productos
+        {{title}}
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn color="gd-primary-to-right" class="white--text rounded-lg font-weight-light mr-2">
@@ -32,6 +32,10 @@
     <v-card-text class="mt-4 mb-4">
       <v-card outlined class="rounded-xl">
         <v-data-table hide-default-footer :headers="headers" :items="productos">
+          <template v-slot:item.precio_unidad="{ item }">
+            $ {{item.precio_unidad}}
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <slot name="button" :item="item"></slot>
           </template>
@@ -47,6 +51,10 @@
       color:{
         type:String,
         default: 'transparent'
+      },
+      title:{
+        type:String,
+        default: 'Productos'
       }
     },
     data() {
@@ -60,9 +68,6 @@
         }, {
           text: 'Precio',
           value: 'precio_unidad'
-        }, {
-          text: 'Distribuidor',
-          value: 'distribuidor'
         }, {
           text: 'Acciones',
           value: 'actions',

@@ -61,6 +61,77 @@
             <v-btn color="gd-primary-to-right" @click="changeConfiguracion()"
               class="white--text font-weight-light rounded-lg">Guardar configuraciones</v-btn>
           </v-card-actions>
+          <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
+            <v-toolbar-title class="font-weight-light">
+              Exportar informacion
+            </v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-row>
+              <v-col class="col-md-12 col-12">
+                <v-card class="rounded-xl">
+                  <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
+                    <v-toolbar-title class="font-weight-light">Consultas</v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-text>
+                    <v-row>
+                      <v-col class="col-md-6">
+                        <v-text-field outlined dense type="date" v-model="searchConsultas.fecha_gte"
+                          label="Fecha desde"></v-text-field>
+                      </v-col>
+                      <v-col class="col-md-6">
+                        <v-text-field outlined dense type="date" v-model="searchConsultas.fecha_lte"
+                          label="Fecha hasta"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="gd-primary-to-right" @click="generateConsultas()"
+                      class="white--text font-weight-light rounded-lg">Exportar</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+              <v-col class="col-md-12 col-12">
+                <v-card class="rounded-xl">
+                  <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
+                    <v-toolbar-title class="font-weight-light">Facturas</v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-text>
+                    <v-row>
+                      <v-col class="col-md-6">
+                        <v-text-field outlined dense type="date" v-model="searchFacturas.fecha_gte"
+                          label="Fecha desde"></v-text-field>
+                      </v-col>
+                      <v-col class="col-md-6">
+                        <v-text-field outlined dense type="date" v-model="searchFacturas.fecha_lte"
+                          label="Fecha hasta"></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="gd-primary-to-right" @click="changeConfiguracion()"
+                      class="white--text font-weight-light rounded-lg">Exportar</v-btn>
+                  </v-card-actions>
+
+                </v-card>
+
+              </v-col>
+              <v-col class="col-md-12 col-12">
+                <v-card class="rounded-xl">
+                  <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
+                    <v-toolbar-title class="font-weight-light">Debitos</v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="gd-primary-to-right" @click="changeConfiguracion()"
+                      class="white--text font-weight-light rounded-lg">Exportar</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col class="col-12">
@@ -112,6 +183,7 @@
 
 <script>
   import InfoUserComponent from '~/components/usuarios/infoUserComponent.vue'
+  import moment from 'moment'
   export default {
     components: {
       InfoUserComponent
@@ -150,12 +222,20 @@
           text: 'Editar',
           align: 'right'
         }],
-        users: []
+        users: [],
+        searchFacturas: {},
+        searchConsultas: {}
+
       }
     },
     created() {
       this.getConfiguracion()
       this.getUsers()
+      this.searchFacturas.fecha_gte = moment().startOf('month').format('YYYY-MM-DD')
+      this.searchFacturas.fecha_lte = moment().endOf('month').format('YYYY-MM-DD')
+      this.searchConsultas.fecha_gte = moment().startOf('month').format('YYYY-MM-DD')
+      this.searchConsultas.fecha_lte = moment().endOf('month').format('YYYY-MM-DD')
+
     },
     methods: {
       getConfiguracion() {
@@ -201,6 +281,19 @@
             this.getUsers()
             this.openModalEditUsers = false
             this.user = {}
+          })
+      },
+      generateConsultas(){
+        this.$axios.get('/atencion/excel', {
+            params: {
+              ...this.searchConsultas
+            }
+          })
+          .then(response => {
+            window.open(response.data.url)
+          })
+          .catch(error => {
+            console.log(error);
           })
       }
     }

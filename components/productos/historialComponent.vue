@@ -39,7 +39,7 @@
               </template>
 
               <template v-slot:item.fecha_compra = {item}>
-                  {{formatDate(item.fecha_compra)}}
+                  {{formatDate(item.created_at)}}
               </template>
           </v-data-table>
         </v-card-text>
@@ -77,7 +77,7 @@
           value: 'total'
         }, {
           text: 'Distribuidor',
-          value: 'distribuidor'
+          value: 'distribuidor.nombre'
         }],
         historialProductos: [],
         openModalProduct: false
@@ -102,9 +102,8 @@
       },
       getHistorial(product) {
           this.openModalProduct = true
-        this.$axios.get('/productos', {
-          params: {nombre_contains:product.nombre,_sort:'fecha_compra:desc'}
-        }).then(response => {
+        this.$axios.get('/compras-mercaderias', {
+          params: {producto: product.id}}).then(response => {
             this.historialProductos = response.data
         });
       },

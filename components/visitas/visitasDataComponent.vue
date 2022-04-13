@@ -9,16 +9,6 @@
           <v-col class="col-12">
             <v-text-field outlined type="time" v-model="atencion.hora" :rules="rules.required" label="Hora"></v-text-field>
           </v-col>
-
-          <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.anamnesis" :rules="rules.required" label="Anamnesis"></v-text-field>
-          </v-col>
-          <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.EOG" :rules="rules.required" label="EOG"></v-text-field>
-          </v-col>
-          <v-col class="col-12">
-            <v-textarea outlined v-model="atencion.diagnostico" :rules="rules.required" label="Diagnostico"></v-textarea>
-          </v-col>
           <v-col class="col-12">
             <v-text-field outlined v-model="atencion.mascota.peso" :rules="rules.required" type="number" label="Peso"></v-text-field>
           </v-col>
@@ -26,11 +16,35 @@
             <v-text-field outlined v-model="atencion.temperatura" :rules="rules.required" type="number" label="Temperatura"></v-text-field>
           </v-col>
           <v-col class="col-12">
+            <v-select outlined v-model="atencion.referencias" :items="['Vacunas','Consulta']" :rules="rules.required" label="Referencias de la consulta"></v-select>
+          </v-col>
+          <v-col class="col-12">
+            <v-text-field outlined v-model="atencion.anamnesis" :rules="rules.required" label="Anamnesis"></v-text-field>
+          </v-col>
+          <v-col class="col-12">
+            <v-text-field outlined v-model="atencion.EOG" :rules="rules.required" label="EOG"></v-text-field>
+          </v-col>
+          <v-col class="col-12">
             <v-textarea outlined v-model="atencion.tratamiento" :rules="rules.required" label="Tratamiento"></v-textarea>
           </v-col>
           <v-col class="col-12">
+            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" :rules="rules.required" label="Fecha de proxima consulta"></v-textarea>
+          </v-col>
+          <v-col class="col-12">
+            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" :rules="rules.required" label="Motivo de proxima consulta"></v-textarea>
+          </v-col>
+          <v-col class="col-12">
+            <label>Archivos</label>
+            <input type="file" @change="onFileChange" id="uploadFile">
+          </v-col>
+
+          <v-col class="col-12">
             <visitas-productos-component v-model="atencion.productos"></visitas-productos-component>
           </v-col>
+          <v-col class="col-12">
+            <visitasProximaComponent v-model="atencion.proximas"></visitasProximaComponent>
+          </v-col>
+
         </v-row>
         <v-divider></v-divider>
         <v-card-actions>
@@ -64,8 +78,11 @@
     },
     created() {},
     mounted() {
+      setTimeout(() => {
       this.atencion.hora = moment().format('HH:mm');
-      this.atencion.fecha = moment().format('YYYY-MM-DD');
+      this.atencion.fecha = moment().format('YYYY-MM-DD');        
+      }, 1000);
+
     },
     methods: {
       checkHandler() {
@@ -75,6 +92,9 @@
           mascota: {}
         }
         this.handler();
+      },
+      onFileChange(e) {
+        this.atencion.file = e.target.files[0]
       }
     },
     watch: {

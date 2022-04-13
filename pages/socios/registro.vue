@@ -20,6 +20,7 @@
 
 <script>
   import FormSociosComponent from '~/components/socios/formSociosComponent.vue'
+  import moment from 'moment'
   export default {
     components: {
       FormSociosComponent
@@ -27,9 +28,11 @@
     data() {
       return {
         socio: {
+          suc:'CASA CENTRAL',
           socio:'SI',
           user:{},
           mascotas: [{}],
+          afiliacion:moment().format('YYYY-MM-DD'),
         },
         createSocioModal: false
       }

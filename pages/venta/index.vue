@@ -14,7 +14,7 @@
                     <!--
                     <v-col class="col-12 col-md-3">
                       <v-select :items="[{text:'Si',value:false},{text:'No',value:true}]" :rules="rules.required" dense
-                        solo label="Cliente activo" class="font-weight-light" v-model="cliente_activo"></v-select>
+                        outlined label="Cliente activo" class="font-weight-light" v-model="cliente_activo"></v-select>
                     </v-col>
                     -->
                     <v-col class="col-12 col-md-4">
@@ -22,7 +22,7 @@
                         min-width="290px" :close-on-content-click="false">
                         <template v-slot:activator="{ on }">
                           <div v-on="on" style="cursor:pointer">
-                            <v-text-field solo dense class="selectInput font-weight-light" label="Seleccione una fecha"
+                            <v-text-field outlined dense class="selectInput font-weight-light" label="Seleccione una fecha"
                               :rules="rules.required" :value="formatDate()" append-icon="mdi-calendar" readonly
                               placeholder="DATE" height="10">
                             </v-text-field>
@@ -40,44 +40,37 @@
                       </v-menu>
                     </v-col>
                     <v-col class="col-md-4">
-                      <v-select solo dense :items="['Factura','Boleta']" :rules="rules.required" v-model="venta.tipo"
+                      <v-select outlined dense :items="['Factura','Boleta',{value:'NotaCredito',text:'Nota de credito'},{value:'NotaDebito',text:'Nota de debito'}]" :rules="rules.required" v-model="venta.tipo"
                         label="Tipo"></v-select>
                     </v-col>
                     <v-col class="col-md-4">
-                      <v-text-field label="Numero" solo dense v-model="venta.codigo" :rules="rules.required"
+                      <v-text-field label="Numero de factura (Manual)" outlined dense v-model="venta.codigo" :rules="rules.required"
                         type="number"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
-                <v-col class="col-md-2">
-                  <v-btn class="gd-primary-to-right rounded-lg white--text font-weight-light" height="40"
-                    @click="createVenta()" block>Generar venta</v-btn>
-                </v-col>
               </v-row>
             </v-card-text>
-            <v-card-text v-if="cliente_activo == null">
+            <v-card-text>
               <v-card outlined class="rounded-xl">
                 <V-card-title class="font-weight-light text-subtitle-1">DATOS DEL CLIENTE</V-card-title>
                 <v-divider></v-divider>
-                <v-card-text v-if="cliente_activo == true">
-                  <SociosFindSociosComponent></SociosFindSociosComponent>
-                </v-card-text>
-                <v-card-text v-else>
+                <v-card-text>
                   <v-row>
+                    <v-col class="col-12">
+                      <SociosFindSociosComponent v-model="findedClient"></SociosFindSociosComponent>
+                    </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Nombre"  v-model="venta.cliente.nombre">
+                      <v-text-field outlined label="Nombre" v-model="venta.cliente.nombre">
                       </v-text-field>
                     </v-col>
                     <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Apellido" v-model="venta.cliente.apellido">
+                      <v-text-field outlined label="Apellido" v-model="venta.cliente.apellido">
                       </v-text-field>
                     </v-col>
-                    <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Direccion" v-model="venta.cliente.direccion">
+                    <v-col class="col-md-12 col-12">
+                      <v-text-field outlined label="Direccion" v-model="venta.cliente.direccion">
                       </v-text-field>
-                    </v-col>
-                    <v-col class="col-md-6 col-12">
-                      <v-text-field solo label="Telefono" v-model="venta.cliente.telefono"></v-text-field>
                     </v-col>
 
                   </v-row>
@@ -91,10 +84,10 @@
               <v-divider></v-divider>
               <v-card-text>
                 <v-row>
-                  <v-col class="col-md-3 col-12">
+                  <v-col class="col-md-12 col-12">
                     <v-input>
                       <v-text-field hide-details filled readonly label="Articulo" prepend-inner-icon="mdi-cart"
-                        v-model="producto.nombre" class="rounded-r-0" solo dense></v-text-field>
+                        v-model="producto.nombre" class="rounded-r-0" outlined dense></v-text-field>
                       <v-btn class="rounded-l-0 rounded-r-lg" height="40" color="primary"
                         @click="showProductsModal = true">
                         <v-icon>mdi-magnify</v-icon>
@@ -104,28 +97,28 @@
                   <v-col>
                     <v-input :disabled="producto.tipo != 'producto'">
                       <v-text-field type="number" readonly hide-details v-model="producto.cantidad" class="rounded-r-0"
-                        prepend-inner-icon="mdi-format-list-bulleted" label="Cantidad" solo dense>
+                        prepend-inner-icon="mdi-format-list-bulleted" label="Cantidad" outlined dense>
                       </v-text-field>
                       <v-btn :disabled="producto.cantidad <=1 || producto.cantidad == undefined" @click="()=>{
                               producto.cantidad--
-                            }" class="rounded-r-0 rounded-l-0" solo height="40" color="warning">
+                            }" class="rounded-r-0 rounded-l-0" outlined height="40" color="warning">
                         <v-icon>mdi-minus</v-icon>
                       </v-btn>
                       <v-btn :disabled="producto.cantidad == undefined" @click="()=>{
                               producto.cantidad++
-                            }" class="rounded-l-0 rounded-r-lg" height="40" solo color="success">
+                            }" class="rounded-l-0 rounded-r-lg" height="40" outlined color="success">
                         <v-icon>mdi-plus</v-icon>
                       </v-btn>
                     </v-input>
                   </v-col>
                   <v-col>
                     <v-text-field type="number" :readonly="producto.descuento == undefined" v-model="producto.descuento"
-                      prepend-inner-icon="mdi-percent" label="Descuento" solo dense>
+                      prepend-inner-icon="mdi-percent" label="Descuento" outlined dense>
                     </v-text-field>
                   </v-col>
                   <v-col>
                     <v-text-field type="number" v-model="producto.precio" filled :readonly="producto.tipo != 'consulta'"
-                      prepend-inner-icon="mdi-currency-usd" label="Precio unidad" solo dense></v-text-field>
+                      prepend-inner-icon="mdi-currency-usd" label="Precio unidad" outlined dense></v-text-field>
                   </v-col>
                   <v-col class="col-md-3 col-12">
                     <v-btn block color="gd-primary-to-right" class="rounded-lg  font-weight-light white--text"
@@ -163,6 +156,12 @@
               </v-card-text>
             </v-card>
           </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn x-large color="success darken-1" class="rounded-lg font-weight-bold white--text font-weight-light" height="40"
+              @click="createVenta()" block>Generar venta&nbsp;<v-icon>mdi-cart</v-icon></v-btn>
+
+          </v-card-actions>
         </v-card>
       </v-col>
       <v-col class="col-12">
@@ -170,7 +169,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="showProductsModal" persistent>
+    <v-dialog v-model="showProductsModal" persistent fullscreen>
       <v-card min-width="90vw" class="rounded-xl">
         <v-toolbar color="gd-primary-to-right" class="elevation-0">
           <v-toolbar-title class="white--text font-weight-light">Agregar a la venta</v-toolbar-title>
@@ -226,12 +225,10 @@
   import moment from 'moment'
   import ventasListComponent from '~/components/ventas/ventasListComponent.vue'
   import visitasListComponent from '~/components/visitas/visitasListComponent.vue'
-  import productosListComponent from '~/components/productos/productosListComponent.vue'
   export default {
     components: {
       ventasListComponent,
       visitasListComponent,
-      productosListComponent
     },
     data() {
       return {
@@ -244,6 +241,7 @@
         },
         ventas: [],
         producto: {},
+        findedClient:Number,
         cliente_activo: null,
         search: {},
         headers: [{
@@ -373,7 +371,24 @@
               }, 500);
           })
       },
+      getSocios(val) {
+        this.$axios.get(`/socios/${val}`)
+          .then(data => {
+            this.findedClient = data.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
     },
+    watch:{
+      findedClient(val){
+        this.venta.cliente.direccion = val.address
+        this.venta.cliente.nombre = val.name
+        this.venta.cliente.apellido = val.last_name
+        this.getSocios(val)
+      }
+    }
   }
 
 </script>

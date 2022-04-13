@@ -9,58 +9,65 @@
       <v-form ref="form">
         <v-row>
           <v-col class="col-12 col-md-6">
-            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" outlined dense :rules="rules.required"
               v-model="socio.name">
             </v-text-field>
-            <v-text-field label="APELLIDO" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="APELLIDO" class="rounded-lg" outlined dense :rules="rules.required"
               v-model="socio.last_name">
             </v-text-field>
-            <v-text-field label="DOCUMENTO" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense :rules="rules.required"
               v-model="socio.user.username">
             </v-text-field>
-            <v-text-field label="DIRECCION" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="DIRECCION" class="rounded-lg" outlined dense 
               v-model="socio.address">
             </v-text-field>
-            <v-text-field label="LOCALIDAD" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="LOCALIDAD" class="rounded-lg" outlined dense 
               v-model="socio.localidad">
             </v-text-field>
-            <v-text-field label="RAZON SOCIAL (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" solo
+            <v-text-field label="RAZON SOCIAL (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" outlined
               dense>
             </v-text-field>
-            <v-select label="TIPO" :items="['Cliente final']" v-model="socio.tipo" class="rounded-lg" solo dense
+            <v-select label="TIPO" :items="['Cliente final']" v-model="socio.tipo" class="rounded-lg" outlined dense
               :rules="rules.required">
             </v-select>
 
           </v-col>
           <v-col class="col-12 col-md-6">
             <v-text-field label="DIRECCION COBRANZA  (Opcional)" v-model="socio.direccion_cobranza" class="rounded-lg"
-              solo dense>
+              outlined dense>
             </v-text-field>
             <v-text-field label="FECHA AFILIACION (Opcional)" type="date" v-model="socio.afiliacion" class="rounded-lg"
-              solo dense>
+              outlined dense>
             </v-text-field>
-            <v-select label="SOCIO" :items="['Si','No']" v-model="socio.socio" class="rounded-lg" solo dense
+            <v-select label="SOCIO" :items="['Si','No']" v-model="socio.socio" class="rounded-lg" outlined dense
               :rules="rules.required">
             </v-select>
-            <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" solo dense
+            <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" outlined dense
               :rules="rules.required">
             </v-select>
-            <v-text-field label="TELEFONO" type="number" class="rounded-lg" solo dense :rules="rules.required"
+            <v-text-field label="TELEFONO" type="number" class="rounded-lg" outlined dense 
               v-model="socio.phone">
             </v-text-field>
-            <v-text-field label="CORREO  (Opcional)" type="email" class="rounded-lg" solo dense v-model="socio.email">
+            <v-text-field label="CORREO  (Opcional)" type="email" class="rounded-lg" outlined dense v-model="socio.email">
             </v-text-field>
-            <v-text-field label="PASSWORD" class="rounded-lg" solo dense v-model="socio.user.password">
+
+            <v-text-field label="PASSWORD" class="rounded-lg" outlined dense v-model="socio.user.password">
             </v-text-field>
 
           </v-col>
-          <v-col class="col-md-12">
-            <v-select label="CUOTA" :items="cuotasList"  v-model="socio.cuota" item-text="nombre" item-value="id" class="rounded-lg" solo dense
+          <v-col class="col-md-6">
+            <v-select label="CUOTA" :items="cuotasList"  v-model="socio.cuota" item-text="nombre" item-value="id" class="rounded-lg" outlined dense
               :rules="rules.required">
             </v-select>
           </v-col>
+          <v-col class="col-md-6">
+            <v-select label="METODO DE PAGO" :items="['Efectivo','Oca','Tarjetas']"  v-model="socio.metodo_pago" class="rounded-lg" outlined dense
+              :rules="rules.required">
+            </v-select>
+          </v-col>
+
           <v-col class="col-12 col-md-12">
-            <v-card solo dense :rules="rules.required" class="rounded-xl">
+            <v-card outlined dense :rules="rules.required" class="rounded-xl">
               <v-toolbar color="gd-primary-to-right white--text" elevation="0">
                 <v-toolbar-title class="font-weight-light">
                   Mascotas
@@ -69,22 +76,22 @@
               <v-card-text>
                 <v-row v-for="(mascota,index) in socio.mascotas" :key="index">
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="NOMBRE" class="rounded-lg" solo dense :rules="rules.required"
+                    <v-text-field label="NOMBRE" class="rounded-lg" outlined dense :rules="rules.required"
                       v-model="socio.mascotas[index].nombre">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="RAZA" class="rounded-lg" solo dense :rules="rules.required"
+                    <v-text-field label="RAZA" class="rounded-lg" outlined dense :rules="rules.required"
                       v-model="socio.mascotas[index].raza">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="COLOR" class="rounded-lg" solo dense :rules="rules.required"
+                    <v-text-field label="COLOR" class="rounded-lg" outlined dense :rules="rules.required"
                       v-model="socio.mascotas[index].color">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field type="date" label="Fecha de nacimiento" class="rounded-lg" solo dense
+                    <v-text-field type="date" label="Fecha de nacimiento" class="rounded-lg" outlined dense
                       :rules="rules.required" v-model="socio.mascotas[index].fecha_nac">
                     </v-text-field>
                   </v-col>
@@ -99,7 +106,7 @@
                     },{
                       text:'Otro',
                       value: 'NN'
-                    }]" class="rounded-lg" solo dense :rules="rules.required" v-model="socio.mascotas[index].sexo">
+                    }]" class="rounded-lg" outlined dense :rules="rules.required" v-model="socio.mascotas[index].sexo">
                     </v-select>
                   </v-col>
                   <v-col class="col-12 col-md-12">
@@ -109,7 +116,7 @@
                     },{
                       text:'No',
                       value: 'No'
-                    }]" class="rounded-lg" solo dense :rules="rules.required" v-model="socio.mascotas[index].socio">
+                    }]" class="rounded-lg" outlined dense :rules="rules.required" v-model="socio.mascotas[index].socio">
                     </v-select>
                   </v-col>
                   <v-col class="col-12">

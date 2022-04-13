@@ -2,7 +2,7 @@
   <div>
     <v-input>
       <v-select solo dense hide-details :items="distribuidoresList" label="Nombre del distribuidor" class="rounded-r-0"
-        item-text="nombre" item-value="id" v-model="selectedDistribuidor">
+        item-text="nombre" item-value="id" return-object v-model="selectedDistribuidor">
       </v-select>
       <v-btn class="rounded-l-0 rounded-r-lg" height="40" color="primary" @click="showDistribuidoresModal = true">
         <v-icon>mdi-plus</v-icon>
@@ -51,6 +51,11 @@
     created() {
       this.getDistribuidores()
     },
+    mounted() {
+      if(localStorage.getItem('distribuidor')){
+        this.selectedDistribuidor = JSON.parse(localStorage.getItem('distribuidor'))
+      }
+    },
     methods: {
       addDistribuidor() {
         this.$axios.post(`/distribuidores`, this.distribuidor)
@@ -70,7 +75,8 @@
     },
     watch: {
       selectedDistribuidor(val) {
-        this.$emit('input', val)
+        localStorage.setItem('distribuidor', JSON.stringify(val))
+        this.$emit('input', val.id)
       }
     }
   }

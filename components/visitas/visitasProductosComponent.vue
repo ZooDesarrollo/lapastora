@@ -26,6 +26,11 @@
           <template v-slot:item.total="{ item }">
             $ {{(item.cant && item.precio) ? item.cant*item.precio : 0}}
           </template>
+          <template v-slot:item.delete="{ item }">
+            <v-btn small color="red" @click="deleteProduct(item)">
+              <v-icon color="white">mdi-delete</v-icon>
+            </v-btn>
+          </template>
 
 
         </v-data-table>
@@ -79,6 +84,9 @@
         }, , {
           value: 'total',
           text: 'Total'
+        },{
+          value: 'delete',
+          text: 'Eliminar'
         }],
         headersProductos:[{
           value: 'nombre',
@@ -108,6 +116,9 @@
             console.log(product)
             this.$set(this.productos,this.productos.length, {producto:product});
             this.modalProductos = false;
+        },
+        deleteProduct(item) {
+          this.productos = this.productos.filter(producto => producto.id != item.id)
         }
     },
     watch: {

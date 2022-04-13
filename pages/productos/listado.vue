@@ -3,13 +3,18 @@
     <ProductosListComponent color="primary">
       <template v-slot:headerButtons>
         <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light" to="/productos">
-          Compra de mercaderia
+          AGREGAR PRODUCTO
         </v-btn>
         &nbsp;&nbsp;
-        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light"
+        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light mr-2"
           @click="openModalHistorial = true">
           Ver historial de productos
         </v-btn>
+        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light"
+          @click="compraModal = true">
+          COMPRA DE MERCADERIA
+        </v-btn>
+
       </template>
         <template v-slot:button="{ item }">
         <v-btn :to="`/productos/editar/${item.id}`" color="gd-primary-to-right"
@@ -28,16 +33,15 @@
         </v-btn>
       </v-toolbar>
 
-      <historial-productos-component></historial-productos-component>
+      <ProductosHistorialComponent></ProductosHistorialComponent>
     </v-dialog>
+    <productosCompraMercaderiaComponent v-model="compraModal"></productosCompraMercaderiaComponent>
   </v-container>
 </template>
 
 <script>
-  import HistorialProductosComponent from '~/components/productos/historialProductosComponent.vue';
   export default {
     components: {
-      HistorialProductosComponent
     },
     data() {
       return {
@@ -59,7 +63,9 @@
           value: 'editar',
           align: 'right'
         }],
-        products: []
+        products: [],
+        compra:{},
+        compraModal: false
       }
     },
     created() {

@@ -130,8 +130,10 @@
       },
       setDefaultCuota(cuota) {
         let oldDefaultCuota = this.cuotasList.find((c)=>c.default)
-        oldDefaultCuota.default = false
-        this.updateCuota(oldDefaultCuota)
+        if(oldDefaultCuota) {
+          oldDefaultCuota.default = false
+          this.updateCuota(oldDefaultCuota)
+        }
         cuota.default = true
         this.updateCuota(cuota)
 

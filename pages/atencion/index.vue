@@ -11,15 +11,15 @@
               <v-col class="col-md-4 col-12">
                 <v-row>
                   <v-col class="col-md-12 col-12">
-                    <v-text-field label="NOMBRE" readonly solo dense filled v-model="atencion.socio.name"
+                    <v-text-field label="NOMBRE" readonly outlined dense filled v-model="atencion.socio.name"
                       class="rounded-lg white--text"> </v-text-field>
-                    <v-text-field label="NRO CLIENTE" readonly solo filled dense v-model="atencion.socio.id"
+                    <v-text-field label="NRO CLIENTE" readonly outlined filled dense v-model="atencion.socio.id"
                       class="rounded-lg white--text"> </v-text-field>
-                    <v-text-field label="APELLIDO" readonly solo dense filled v-model="atencion.socio.last_name"
+                    <v-text-field label="APELLIDO" readonly outlined dense filled v-model="atencion.socio.last_name"
                       class="rounded-lg white--text"> </v-text-field>
-                    <v-text-field label="DIRECCION" readonly solo dense filled v-model="atencion.socio.address"
+                    <v-text-field label="DIRECCION" readonly outlined dense filled v-model="atencion.socio.address"
                       class="rounded-lg white--text"> </v-text-field>
-                    <v-text-field label="TELEFONO" readonly hide-details filled v-model="atencion.socio.phone" solo
+                    <v-text-field label="TELEFONO" readonly hide-details filled v-model="atencion.socio.phone" outlined
                       dense class="rounded-lg white--text"> </v-text-field>
                   </v-col>
                   <v-col class="col-12 d-flex justify-space-between">
@@ -47,11 +47,12 @@
 
                   </v-data-table>
                 </v-card>
+                  <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model ="atencion.socio.payment_date" readonly></v-text-field>
               </v-col>
               <v-col class="col-md-4 col-12">
-                <v-text-field label="RAZA" readonly v-model="atencion.mascota.raza" solo dense
+                <v-text-field label="RAZA" readonly v-model="atencion.mascota.raza" outlined dense
                   class="rounded-lg white--text"> </v-text-field>
-                <v-text-field label="COLOR" readonly solo v-model="atencion.mascota.color" dense
+                <v-text-field label="COLOR" readonly outlined v-model="atencion.mascota.color" dense
                   class="rounded-lg white--text"> </v-text-field>
                 <v-select :items="[{
                       text:'Macho',
@@ -62,12 +63,14 @@
                     },{
                       text:'Otro',
                       value: 'NN'
-                    }]" label="SEXO" solo dense v-model="atencion.mascota.sexo" readonly
+                    }]" label="SEXO" outlined dense v-model="atencion.mascota.sexo" readonly
                   class="rounded-lg white--text">
                 </v-select>
-                <v-text-field label="EDAD" readonly solo dense v-model="atencion.mascota.edad"
+                <v-text-field label="EDAD" readonly outlined dense v-model="atencion.mascota.edad"
                   class="rounded-lg white--text"> </v-text-field>
-                <v-text-field type="date" label="DECESO" readonly solo dense v-model="atencion.mascota.deceso"
+                <v-text-field type="date" label="DECESO" readonly outlined dense v-model="atencion.mascota.deceso"
+                  class="rounded-lg white--text"> </v-text-field>
+                <v-text-field type="text" label="SOCIO" readonly outlined dense :value="setSocioName(atencion.mascota)"
                   class="rounded-lg white--text"> </v-text-field>
               </v-col>
             </v-row>
@@ -79,19 +82,19 @@
           <v-toolbar color="gd-primary-to-right" elevation="0">
             <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn class="mr-2 white--text font-weight-light"
+            <v-btn class="mr-2 font-weight-light"
               :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id"
-              color="gd-primary-to-right" @click="()=>{
+              color="white" @click="()=>{
                       modalAtencion = true}">
               Nueva visita
             </v-btn>
-            <v-btn class="mr-2 white--text font-weight-light" :disabled="selectedAtencion.length==0"
-              color="gd-primary-to-right" @click="()=>{
+            <v-btn class="mr-2 font-weight-light" :disabled="selectedAtencion.length==0"
+              color="white" @click="()=>{
                       modalUpdateAtencion = true}">
               Modificar visita
             </v-btn>
-            <v-btn class="white--text font-weight-light" :disabled="selectedAtencion.length==0"
-              color="gd-primary-to-right" @click="deleteMascota()">
+            <v-btn class="font-weight-light" :disabled="selectedAtencion.length==0"
+              color="white" @click="deleteMascota()">
               Eliminar visita
             </v-btn>
           </v-toolbar>
@@ -183,7 +186,8 @@
             mascotas: []
           },
           mascota: {},
-          productos: []
+          productos: [],
+          proximas:[]
         },
         socio: {
           user: {},
@@ -215,9 +219,6 @@
         }, {
           text: "Anamnesis",
           value: "anamnesis"
-        }, {
-          text: "Diagnostico",
-          value: "diagnostico"
         }, {
           text: "Pronostico",
           value: "pronostico"
@@ -276,12 +277,33 @@
         this.selectedAtencion = []
         this.selectedMascota = []
       },
+      setSocioName(mascota){
+        if(!mascota.socio) return 
+        return mascota.socio +' es socio'
+      },
       createAtencion() {
         this.atencion.hora = `${this.atencion.hora}:00.000`
         this.$axios.post('/atencion', this.atencion).then(response => {
           this.getAtencionMascota(this.atencion.mascota)
+          this.uploadFile(response.data.id, this.atencion.file)
           this.formatAtencion()
           this.modalAtencion = false
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      uploadFile(idAtencion, file){
+        let data = new FormData()
+        data.append('ref', 'atencion')
+        data.append('refId', idAtencion)
+        data.append('field', 'file')
+        data.append('files', file)
+        this.$axios.post('/upload', data,{
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(response => {
+          console.log(response);
         }).catch(error => {
           console.log(error);
         });
@@ -301,7 +323,6 @@
       formatAtencion() {
         this.atencion.EOG = ""
         this.atencion.anamnesis = ""
-        this.atencion.diagnostico = ""
         this.atencion.pronostico = ""
         this.atencion.tratamiento = ""
         this.atencion.hora = ""

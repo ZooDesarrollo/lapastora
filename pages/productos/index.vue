@@ -1,6 +1,10 @@
 <template>
   <v-container fluid>
-    <v-card>
+    <v-card class="rounded-xl">
+      <v-toolbar card class="gd-primary-to-right" elevation="0">
+        <v-toolbar-title class="white--text font-weight-light">AGREGAR PRODUCTO</v-toolbar-title>
+        <v-spacer></v-spacer>
+      </v-toolbar>
       <v-card-text>
         <v-form ref="form">
           <v-row>
