@@ -47,7 +47,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light" depressed large
-          @click="createProduct()">
+          @click="editProduct()">
           GUARDAR
         </v-btn>
       </v-card-actions>
