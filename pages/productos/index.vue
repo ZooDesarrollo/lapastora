@@ -29,8 +29,6 @@
                   </v-text-field>
                   <v-text-field label="PRECIO FINAL" type="number" v-model="product.precio_final" class="rounded-lg"
                     solo dense></v-text-field>
-                  <productosCreateDistribuidoresComponent @created="getDistribuidores()" v-model="product.distribuidor">
-                  </productosCreateDistribuidoresComponent>
                   <v-text-field label="FECHA DE COMPRA" type="date" v-model="product.fecha_compra" class="rounded-lg"
                     solo dense></v-text-field>
                   <v-text-field label="VENCIMIENTO" type="date" v-model="product.vencimiento" class="rounded-lg"
