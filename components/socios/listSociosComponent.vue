@@ -41,8 +41,7 @@
           {
             text: 'DNI',
             value: 'user.username'
-          },
-          {
+          },{
             text:'Ultima cuota paga',
             value:'payment_date'
           },
@@ -58,7 +57,11 @@
     },
     methods: {
       formatDate(date) {
-        return moment(date).format('DD/MM/YYYY')
+        if(date) {
+          return moment(date).format('DD/MM/YYYY')
+llllllllllll3        } else {
+          return 'Pago aun no realizado'
+        }
       },
     },
   }
@@ -67,4 +70,4 @@
 
 <style>
 
-</style>
+</style>g

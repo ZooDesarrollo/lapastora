@@ -1,27 +1,33 @@
 <template>
   <v-container fluid>
-    <ProductosListComponent color="primary">
-      <template v-slot:headerButtons>
-        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light" to="/productos">
-          AGREGAR PRODUCTO
-        </v-btn>
-        &nbsp;&nbsp;
-        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light mr-2"
-          @click="openModalHistorial = true">
-          Ver historial de productos
-        </v-btn>
-        <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light"
-          @click="compraModal = true">
-          COMPRA DE MERCADERIA
-        </v-btn>
+    <v-row>
+      <v-col class="col-12">
+        <ProductosListComponent color="primary">
+          <template v-slot:headerButtons>
+            <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light" to="/productos">
+              AGREGAR PRODUCTO
+            </v-btn>
+            &nbsp;&nbsp;
+            <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light mr-2"
+              @click="openModalHistorial = true">
+              Ver historial de productos
+            </v-btn>
+            <v-btn color="gd-primary-to-right" class="rounded-lg white--text font-weight-light"
+              @click="compraModal = true">
+              COMPRA DE MERCADERIA
+            </v-btn>
+          </template>
+          <template v-slot:button="{ item }">
+            <v-btn :to="`/productos/editar/${item.id}`" color="gd-primary-to-right"
+              class="rounded-lg white--text font-weight-light">Editar</v-btn>
+          </template>
+        </ProductosListComponent>
 
-      </template>
-        <template v-slot:button="{ item }">
-        <v-btn :to="`/productos/editar/${item.id}`" color="gd-primary-to-right"
-          class="rounded-lg white--text font-weight-light">Editar</v-btn>
-      </template>
-
-    </ProductosListComponent>
+      </v-col>
+      <v-col class="col-12">
+        <productosComprasListComponent></productosComprasListComponent>
+      </v-col>
+    </v-row>
     <v-dialog v-model="openModalHistorial" persistent width="600">
       <v-toolbar color="primary" class="elevation-0">
         <v-toolbar-title class="font-weight-light white--text">
@@ -32,7 +38,6 @@
           <v-icon class="font-weight-light white--text">mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-
       <ProductosHistorialComponent></ProductosHistorialComponent>
     </v-dialog>
     <productosCompraMercaderiaComponent v-model="compraModal"></productosCompraMercaderiaComponent>
@@ -41,8 +46,7 @@
 
 <script>
   export default {
-    components: {
-    },
+    components: {},
     data() {
       return {
         openModalHistorial: false,
@@ -64,7 +68,7 @@
           align: 'right'
         }],
         products: [],
-        compra:{},
+        compra: {},
         compraModal: false
       }
     },

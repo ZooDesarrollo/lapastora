@@ -31,15 +31,15 @@
         </v-toolbar>
         <v-card-text>
           <v-data-table :headers="headersHistorial" hide-default-footer :items="historialProductos">
-              <template v-slot:item.precio_unidad = {item}>
-                  $ {{item.precio_unidad}}
+              <template v-slot:item.producto.precio_unidad = {item}>
+                  $ {{item.producto.precio_unidad}}
               </template>
               <template v-slot:item.total = {item}>
-                  $ {{item.precio_unidad * item.cantidad}}
+                  $ {{item.total}}
               </template>
 
-              <template v-slot:item.fecha_compra = {item}>
-                  {{formatDate(item.created_at)}}
+              <template v-slot:item.fecha = {item}>
+                  {{formatDate(item.fecha)}}
               </template>
           </v-data-table>
         </v-card-text>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     data() {
       return {
@@ -65,13 +66,13 @@
         }],
         headersHistorial: [{
           text: 'Fecha',
-          value: 'fecha_compra'
+          value: 'fecha'
         }, {
           text: 'Precio',
-          value: 'precio_unidad'
+          value: 'producto.precio_unidad'
         }, {
           text: 'Cantidad',
-          value: 'cantidad'
+          value: 'producto.cantidad'
         }, {
           text: 'Precio total',
           value: 'total'
@@ -102,14 +103,15 @@
       },
       getHistorial(product) {
           this.openModalProduct = true
-        this.$axios.get('/compras-mercaderias', {
-          params: {producto: product.id}}).then(response => {
-            this.historialProductos = response.data
+        this.$axios.get('/compras-mercaderias?productos.producto='+product.id).then(response => {
+            this.historialProductos = response.data.map((d)=>{
+              d.producto = d.productos.find((p)=>p.producto = product.id)
+              return d
+            })
         });
       },
       formatDate(date) {
-        let finalDate = date.split('-')
-        return `${finalDate[2]}/${finalDate[1]}/${finalDate[0]}`
+        return moment(date).format('DD/MM/YYYY')
       },
 
     }

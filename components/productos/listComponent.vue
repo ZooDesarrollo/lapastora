@@ -25,8 +25,6 @@
             Buscar&nbsp;<v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-col>
-        <v-col class="col-12">
-        </v-col>
       </v-row>
     </v-card-title>
     <v-card-text class="mt-4 mb-4">

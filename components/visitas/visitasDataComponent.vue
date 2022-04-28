@@ -4,38 +4,45 @@
       <v-card-text>
         <v-row>
           <v-col class="col-12">
-            <v-text-field outlined type="date" v-model="atencion.fecha" :rules="rules.required" label="Fecha"></v-text-field>
+            <v-text-field type="text" label="SOCIO" readonly outlined filled dense :value="setSocioName(atencion.mascota)"
+              class="rounded-lg white--text"> </v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined type="time" v-model="atencion.hora" :rules="rules.required" label="Hora"></v-text-field>
+            <v-text-field outlined type="date" v-model="atencion.fecha" label="Fecha"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.mascota.peso" :rules="rules.required" type="number" label="Peso"></v-text-field>
+            <v-text-field outlined type="time" v-model="atencion.hora" label="Hora"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.temperatura" :rules="rules.required" type="number" label="Temperatura"></v-text-field>
+            <v-text-field outlined v-model="atencion.mascota.peso" type="number" label="Peso"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-select outlined v-model="atencion.referencias" :items="['Vacunas','Consulta']" :rules="rules.required" label="Referencias de la consulta"></v-select>
+            <v-text-field outlined v-model="atencion.temperatura" type="number" label="Temperatura"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.anamnesis" :rules="rules.required" label="Anamnesis"></v-text-field>
+            <v-select outlined v-model="atencion.referencias" :items="['Vacunas','Consulta']"
+              label="Referencias de la consulta"></v-select>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.EOG" :rules="rules.required" label="EOG"></v-text-field>
+            <v-text-field outlined v-model="atencion.anamnesis" label="Anamnesis"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined v-model="atencion.tratamiento" :rules="rules.required" label="Tratamiento"></v-textarea>
+            <v-text-field outlined v-model="atencion.EOG" label="EOG"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" :rules="rules.required" label="Fecha de proxima consulta"></v-textarea>
+            <v-textarea outlined v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" :rules="rules.required" label="Motivo de proxima consulta"></v-textarea>
+            <v-text-field outlined type="date" v-model="atencion.proxima_consulta" label="Fecha de proxima consulta">
+            </v-text-field>
+          </v-col>
+          <v-col class="col-12">
+            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" label="Motivo de proxima consulta">
+            </v-textarea>
           </v-col>
           <v-col class="col-12">
             <label>Archivos</label>
-            <input type="file" @change="onFileChange" id="uploadFile">
+            <input type="file" @change="onFileChange" multiple id="uploadFile">
           </v-col>
 
           <v-col class="col-12">
@@ -71,7 +78,7 @@
     data() {
       return {
         atencion: this.value,
-        rules:{
+        rules: {
           required: [value => !!value || 'Este campo es requerido.'],
         }
       }
@@ -79,8 +86,9 @@
     created() {},
     mounted() {
       setTimeout(() => {
-      this.atencion.hora = moment().format('HH:mm');
-      this.atencion.fecha = moment().format('YYYY-MM-DD');        
+        this.atencion.hora = moment().format('HH:mm');
+        this.atencion.fecha = moment().format('YYYY-MM-DD');
+        this.$forceUpdate()
       }, 1000);
 
     },
@@ -95,10 +103,14 @@
       },
       onFileChange(e) {
         this.atencion.file = e.target.files[0]
-      }
+      },
+      setSocioName(mascota) {
+        if (!mascota.socio) return
+        return mascota.socio + ' es socio'
+      },
+
     },
-    watch: {
-    }
+    watch: {}
   }
 
 </script>

@@ -47,7 +47,8 @@
 
                   </v-data-table>
                 </v-card>
-                  <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model ="atencion.socio.payment_date" readonly></v-text-field>
+                <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model="atencion.socio.payment_date"
+                  readonly></v-text-field>
               </v-col>
               <v-col class="col-md-4 col-12">
                 <v-text-field label="RAZA" readonly v-model="atencion.mascota.raza" outlined dense
@@ -83,18 +84,16 @@
             <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn class="mr-2 font-weight-light"
-              :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id"
-              color="white" @click="()=>{
+              :disabled="!this.atencion.socio.id || !this.atencion.mascota.id || this.atencion.id" color="white" @click="()=>{
                       modalAtencion = true}">
               Nueva visita
             </v-btn>
-            <v-btn class="mr-2 font-weight-light" :disabled="selectedAtencion.length==0"
-              color="white" @click="()=>{
+            <v-btn class="mr-2 font-weight-light" :disabled="selectedAtencion.length==0" color="white" @click="()=>{
                       modalUpdateAtencion = true}">
               Modificar visita
             </v-btn>
-            <v-btn class="font-weight-light" :disabled="selectedAtencion.length==0"
-              color="white" @click="deleteMascota()">
+            <v-btn class="font-weight-light" :disabled="selectedAtencion.length==0" color="white"
+              @click="deleteMascota()">
               Eliminar visita
             </v-btn>
           </v-toolbar>
@@ -114,6 +113,9 @@
           <v-card-actions>
           </v-card-actions>
         </v-card>
+      </v-col>
+      <v-col class="col-12">
+        <visitasAllListComponent></visitasAllListComponent>
       </v-col>
     </v-row>
     <v-dialog v-model="createSocioModal" width="80%" height="auto">
@@ -187,7 +189,7 @@
           },
           mascota: {},
           productos: [],
-          proximas:[]
+          proximas: []
         },
         socio: {
           user: {},
@@ -196,6 +198,7 @@
         sociosList: [],
         selectedAtencion: [],
         consultaItems: [],
+        consultaItemsAll: [],
         modalAtencion: false,
         modalUpdateAtencion: false,
         selectedMascota: [],
@@ -216,6 +219,9 @@
         }, {
           text: "EOG",
           value: "EOG"
+        }, {
+          text: "Referencias",
+          value: "referencias"
         }, {
           text: "Anamnesis",
           value: "anamnesis"
@@ -277,9 +283,9 @@
         this.selectedAtencion = []
         this.selectedMascota = []
       },
-      setSocioName(mascota){
-        if(!mascota.socio) return 
-        return mascota.socio +' es socio'
+      setSocioName(mascota) {
+        if (!mascota.socio) return
+        return mascota.socio + ' es socio'
       },
       createAtencion() {
         this.atencion.hora = `${this.atencion.hora}:00.000`
@@ -292,13 +298,15 @@
           console.log(error);
         });
       },
-      uploadFile(idAtencion, file){
+      getAtenciones() {
+      },
+      uploadFile(idAtencion, file) {
         let data = new FormData()
         data.append('ref', 'atencion')
         data.append('refId', idAtencion)
         data.append('field', 'file')
         data.append('files', file)
-        this.$axios.post('/upload', data,{
+        this.$axios.post('/upload', data, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
