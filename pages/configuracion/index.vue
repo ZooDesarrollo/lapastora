@@ -61,6 +61,7 @@
             <v-btn color="gd-primary-to-right" @click="changeConfiguracion()"
               class="white--text font-weight-light rounded-lg">Guardar configuraciones</v-btn>
           </v-card-actions>
+          <!-- 
           <v-toolbar color="gd-primary-to-right" class="elevation-0 white--text">
             <v-toolbar-title class="font-weight-light">
               Exportar informacion
@@ -132,6 +133,7 @@
               </v-col>
             </v-row>
           </v-card-text>
+          -->
         </v-card>
       </v-col>
       <v-col class="col-12">
