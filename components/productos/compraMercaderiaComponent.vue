@@ -20,7 +20,7 @@
               </v-toolbar>
               <v-divider></v-divider>
               <v-card-text>
-                <productosCreateDistribuidoresComponent v-model="distribuidor">
+                <productosCreateDistribuidoresComponent v-model="compra.distribuidor">
                 </productosCreateDistribuidoresComponent>
               </v-card-text>
             </v-card>
@@ -151,9 +151,9 @@
       return {
         stepper: 1,
         compra: {
+          distribuidor:1,
           productos:[]
         },
-        distribuidor: null,
         headers: [{
             text: 'Codigo',
             value: 'codigo'
@@ -200,7 +200,6 @@
         this.compra.productos = this.compra.productos.filter(producto => producto != item)
       },
       async saveCompras() {
-        this.compra.distribuidor = this.distribuidor
         await this.$axios.post('/compras-mercaderias', this.compra)
         this.successCompras = true
         this.$root.$emit('updateCompras', true)
