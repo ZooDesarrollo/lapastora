@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
     <v-card>
-      <v-card-text>
+      <v-card-text class="overflow-card" >
         <v-row>
           <v-col class="col-12">
             <v-text-field type="text" label="SOCIO" readonly outlined filled dense :value="setSocioName(atencion.mascota)"

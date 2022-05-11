@@ -127,7 +127,7 @@
             <v-icon color="white">mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text class="pa-4 overflow-card">
+        <v-card-text class="pa-4 ">
           <formSociosComponent :handler="createSocio" v-model="socio"></formSociosComponent>
         </v-card-text>
         <v-divider></v-divider>
@@ -153,7 +153,7 @@
           <v-icon color="white">mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <visitas-data-component class="overflow-card" v-model="atencion" :handler="createAtencion" :mascota="mascota"
+      <visitas-data-component class="overflow-card"  v-model="atencion" :handler="createAtencion" :mascota="mascota"
         @changeMascota="($e)=>{
             mascota = $e
           }"></visitas-data-component>
