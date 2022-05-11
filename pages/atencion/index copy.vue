@@ -68,9 +68,9 @@
       </v-col>
     </v-row>
     <v-dialog v-model="createSocioModal" width="80%" height="auto">
-      <v-card>
-        <v-toolbar class="elevation-0" color="primary">
-          <v-toolbar-title class="white--text font-weight-thin">NUEVO SOCIO</v-toolbar-title>
+      <v-card class="p-relative">
+        <v-toolbar absolute class="elevation-0" color="primary">
+          <v-toolbar-title class="white--text font-weight-thin">Nuevo cliente</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click.native="createSocioModal = false">
             <v-icon color="white">mdi-close</v-icon>

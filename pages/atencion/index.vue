@@ -34,7 +34,7 @@
                         <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
                           @click="()=>{
                       createSocioModal = true;
-                      }">NUEVO CLIENTE</v-btn>
+                      }">Nuevo cliente</v-btn>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -121,13 +121,13 @@
     <v-dialog v-model="createSocioModal" width="80%" height="auto">
       <v-card>
         <v-toolbar class="elevation-0" color="primary">
-          <v-toolbar-title class="white--text font-weight-thin">NUEVO SOCIO</v-toolbar-title>
+          <v-toolbar-title class="white--text font-weight-thin">Nuevo cliente</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click.native="createSocioModal = false">
             <v-icon color="white">mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text class="pa-4">
+        <v-card-text class="pa-4 overflow-card">
           <formSociosComponent :handler="createSocio" v-model="socio"></formSociosComponent>
         </v-card-text>
         <v-divider></v-divider>
@@ -153,7 +153,8 @@
           <v-icon color="white">mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <visitas-data-component v-model="atencion" :handler="createAtencion" :mascota="mascota" @changeMascota="($e)=>{
+      <visitas-data-component class="overflow-card" v-model="atencion" :handler="createAtencion" :mascota="mascota"
+        @changeMascota="($e)=>{
             mascota = $e
           }"></visitas-data-component>
     </v-dialog>
@@ -184,6 +185,7 @@
     data() {
       return {
         atencion: {
+          files: [],
           socio: {
             mascotas: []
           },
@@ -221,7 +223,7 @@
           value: "EOG"
         }, {
           text: "Referencias",
-          value: "referencias"
+          value: "referencias.nombre"
         }, {
           text: "Anamnesis",
           value: "anamnesis"
@@ -291,36 +293,23 @@
         this.atencion.hora = `${this.atencion.hora}:00.000`
         this.$axios.post('/atencion', this.atencion).then(response => {
           this.getAtencionMascota(this.atencion.mascota)
-          this.uploadFile(response.data.id, this.atencion.file)
+
+          let uploadFiles = this.atencion.files.filter((file) => file instanceof File)
+
+          this.uploadFile(response.data.id, uploadFiles)
           this.formatAtencion()
           this.modalAtencion = false
         }).catch(error => {
           console.log(error);
         });
       },
-      getAtenciones() {
-      },
-      uploadFile(idAtencion, file) {
-        let data = new FormData()
-        data.append('ref', 'atencion')
-        data.append('refId', idAtencion)
-        data.append('field', 'file')
-        data.append('files', file)
-        this.$axios.post('/upload', data, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then(response => {
-          console.log(response);
-        }).catch(error => {
-          console.log(error);
-        });
-      },
       updateAtencion() {
-
         this.$axios.put('/atencion/' + this.atencion.id, this.atencion).then(async response => {
+          this.uploadFile(response.data.id, this.atencion.files)
+
+          let uploadFiles = this.atencion.files.filter((file) => file instanceof File)
+          this.uploadFile(response.data.id, uploadFiles)
           await this.getAtencionMascota(this.atencion.mascota)
-          this.formatAtencion()
           await this.updateMascota()
           this.modalUpdateAtencion = false
           this.selectedAtencion = []
@@ -329,13 +318,16 @@
         });
       },
       formatAtencion() {
-        this.atencion.EOG = ""
-        this.atencion.anamnesis = ""
-        this.atencion.pronostico = ""
-        this.atencion.tratamiento = ""
-        this.atencion.hora = ""
-        this.atencion.fecha = ""
-        this.atencion.id = null
+        this.atencion = {
+          files: [],
+          socio: {
+            mascotas: []
+          },
+          mascota: {},
+          productos: [],
+          proximas: []
+        }
+        this.$forceUpdate()
       },
       updateMascota() {
         this.$axios.put('/mascotas/' + this.mascota.id, this.mascota).then(response => {}).catch(error => {
@@ -370,6 +362,30 @@
       formatHour(hour) {
         let finalHour = hour.split(':')
         return `${finalHour[0]}:${finalHour[1]}`
+      },
+      uploadFile(idAtencion, files) {
+        console.log
+        if(files.length == 0) return 
+        
+        
+        let data = new FormData()
+        data.append('ref', 'atencion')
+        data.append('refId', idAtencion)
+        data.append('field', 'files')
+        for (let file in files) {
+          if (files[file] instanceof File) {
+            data.append('files', files[file], files[file].name)
+          }
+        }
+        this.$axios.post('/upload', data, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(response => {
+          console.log(response);
+        }).catch(error => {
+          console.log(error);
+        });
       },
 
     },

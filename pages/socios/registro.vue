@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <formSociosComponent :handler="createSocio" v-model="socio">
-      Nuevo socio
+      Nuevo cliente
     </formSociosComponent>
     <modal-success :action="()=>{
       this.createSocioModal = false
@@ -30,6 +30,7 @@
         socio: {
           suc:'CASA CENTRAL',
           socio:'SI',
+          tipo:'Cliente final',
           user:{},
           mascotas: [{}],
           afiliacion:moment().format('YYYY-MM-DD'),

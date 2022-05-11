@@ -8,41 +8,39 @@
               class="rounded-lg white--text"> </v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined type="date" v-model="atencion.fecha" label="Fecha"></v-text-field>
+            <v-text-field outlined :readonly="readonly" type="date" v-model="atencion.fecha" label="Fecha"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined type="time" v-model="atencion.hora" label="Hora"></v-text-field>
+            <v-text-field outlined :readonly="readonly" type="time" v-model="atencion.hora" label="Hora"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.mascota.peso" type="number" label="Peso"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.mascota.peso" type="number" label="Peso"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.temperatura" type="number" label="Temperatura"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.temperatura" type="number" label="Temperatura"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-select outlined v-model="atencion.referencias" :items="['Vacunas','Consulta']"
-              label="Referencias de la consulta"></v-select>
+              <createReferenciasComponent v-model="atencion.referencias"></createReferenciasComponent>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.anamnesis" label="Anamnesis"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.anamnesis" label="Anamnesis"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined v-model="atencion.EOG" label="EOG"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.EOG" label="EOG"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>
+            <v-textarea outlined :readonly="readonly" v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined type="date" v-model="atencion.proxima_consulta" label="Fecha de proxima consulta">
+            <v-text-field outlined type="date" :readonly="readonly" v-model="atencion.proxima_consulta" label="Fecha de proxima consulta">
             </v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined type="date" v-model="atencion.proxima_consulta" label="Motivo de proxima consulta">
+            <v-textarea outlined type="date" :readonly="readonly" v-model="atencion.proxima_consulta" label="Motivo de proxima consulta">
             </v-textarea>
           </v-col>
           <v-col class="col-12">
-            <label>Archivos</label>
-            <input type="file" @change="onFileChange" multiple id="uploadFile">
+            <UploadFilesComponent v-model="atencion.files" :readonly="readonly"></UploadFilesComponent>
           </v-col>
 
           <v-col class="col-12">
@@ -54,7 +52,7 @@
 
         </v-row>
         <v-divider></v-divider>
-        <v-card-actions>
+        <v-card-actions v-if="!readonly">
           <v-spacer></v-spacer>
           <v-btn color="primary" depressed @click="checkHandler()">Finalizar visita</v-btn>
         </v-card-actions>
@@ -65,15 +63,21 @@
 
 <script>
   import visitasProductosComponent from './visitasProductosComponent.vue';
+  import createReferenciasComponent from './createReferenciasComponent.vue';
   import moment from 'moment';
   export default {
     components: {
-      visitasProductosComponent
+      visitasProductosComponent,
+      createReferenciasComponent
     },
 
     props: {
       value: Object,
-      handler: Function
+      handler: Function,
+      readonly:{
+        default:false,
+        type:Boolean
+      }
     },
     data() {
       return {
@@ -100,6 +104,7 @@
           mascota: {}
         }
         this.handler();
+
       },
       onFileChange(e) {
         this.atencion.file = e.target.files[0]
@@ -110,7 +115,14 @@
       },
 
     },
-    watch: {}
+    watch: {
+      value: {
+        handler(newValue) {
+          this.atencion = newValue
+        },
+        deep:true
+    }
+  }
   }
 
 </script>

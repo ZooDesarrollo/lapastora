@@ -9,6 +9,9 @@
             </v-toolbar-title>
           </v-toolbar>
           <v-card-text>
+            <configuracionReferenciasComponent></configuracionReferenciasComponent>
+          </v-card-text>
+          <v-card-text>
             <configuracionCuotasComponent></configuracionCuotasComponent>
           </v-card-text>
           <v-card-text>

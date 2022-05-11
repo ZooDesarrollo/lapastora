@@ -129,6 +129,10 @@
             value: 'nrofactura'
           },
           {
+            text: 'Distribuidor',
+            value: 'distribuidor.nombre'
+          },
+          {
             text: 'Fecha',
             value: 'fecha'
           },

@@ -8,6 +8,9 @@
     <v-card-text class="pa-2">
       <v-form ref="form">
         <v-row>
+          <v-col class="col-md-12">
+            <v-text-field label="CLIENTE AGREGADO" hide-details :value="setValueCreatedAt(socio.created_at)" outlined dense class="rounded-lg"></v-text-field>
+          </v-col>
           <v-col class="col-12 col-md-6">
             <v-text-field label="NOMBRE SOCIO" class="rounded-lg" outlined dense :rules="rules.required"
               v-model="socio.name">
@@ -15,14 +18,12 @@
             <v-text-field label="APELLIDO" class="rounded-lg" outlined dense :rules="rules.required"
               v-model="socio.last_name">
             </v-text-field>
-            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense :rules="rules.required"
+            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense
               v-model="socio.user.username">
             </v-text-field>
-            <v-text-field label="DIRECCION" class="rounded-lg" outlined dense 
-              v-model="socio.address">
+            <v-text-field label="DIRECCION" class="rounded-lg" outlined dense v-model="socio.address">
             </v-text-field>
-            <v-text-field label="LOCALIDAD" class="rounded-lg" outlined dense 
-              v-model="socio.localidad">
+            <v-text-field label="LOCALIDAD" class="rounded-lg" outlined dense v-model="socio.localidad">
             </v-text-field>
             <v-text-field label="RAZON SOCIAL (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" outlined
               dense>
@@ -45,27 +46,28 @@
             <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" outlined dense
               :rules="rules.required">
             </v-select>
-            <v-text-field label="TELEFONO" type="number" class="rounded-lg" outlined dense 
-              v-model="socio.phone">
+            <v-text-field label="TELEFONO" type="number" class="rounded-lg" outlined dense v-model="socio.phone">
             </v-text-field>
-            <v-text-field label="CORREO  (Opcional)" type="email" class="rounded-lg" outlined dense v-model="socio.email">
+            <v-text-field label="CORREO  (Opcional)" type="email" class="rounded-lg" outlined dense
+              v-model="socio.email">
             </v-text-field>
 
             <v-text-field label="PASSWORD" class="rounded-lg" outlined dense v-model="socio.user.password">
             </v-text-field>
 
           </v-col>
-          <v-col class="col-md-6">
-            <v-select label="CUOTA" :items="cuotasList"  v-model="socio.cuota" item-text="nombre" item-value="id" class="rounded-lg" outlined dense
-              :rules="rules.required">
-            </v-select>
-          </v-col>
-          <v-col class="col-md-6">
-            <v-select label="METODO DE PAGO" :items="['Efectivo','Oca','Tarjetas']"  v-model="socio.metodo_pago" class="rounded-lg" outlined dense
-              :rules="rules.required">
-            </v-select>
-          </v-col>
-
+          <template v-if="socio.socio == 'Si'">
+            <v-col class="col-md-6">
+              <v-select label="CUOTA" :items="cuotasList" v-model="socio.cuota" item-text="nombre" item-value="id"
+                class="rounded-lg" outlined dense :rules="rules.required">
+              </v-select>
+            </v-col>
+            <v-col class="col-md-6">
+              <v-select label="METODO DE PAGO" :items="['Mostrador','Automatico oca','Automatico (Otras)']" v-model="socio.metodo_pago"
+                class="rounded-lg" outlined dense :rules="rules.required">
+              </v-select>
+            </v-col>
+          </template>
           <v-col class="col-12 col-md-12">
             <v-card outlined dense :rules="rules.required" class="rounded-xl">
               <v-toolbar color="gd-primary-to-right white--text" elevation="0">
@@ -116,7 +118,8 @@
                     },{
                       text:'No',
                       value: 'No'
-                    }]" class="rounded-lg" outlined dense :rules="rules.required" v-model="socio.mascotas[index].socio">
+                    }]" class="rounded-lg" outlined dense :rules="rules.required"
+                      v-model="socio.mascotas[index].socio">
                     </v-select>
                   </v-col>
                   <v-col class="col-12">
@@ -125,11 +128,13 @@
                 </v-row>
               </v-card-text>
               <v-card-title>
-                <v-btn color="gd-primary-to-right" v-if="socio.mascotas.length>1" depressed @click="deleteMascota()" class="white--text font-weight-light rounded-lg mr-1">
+                <v-btn color="gd-primary-to-right" v-if="socio.mascotas.length>1" depressed @click="deleteMascota()"
+                  class="white--text font-weight-light rounded-lg mr-1">
                   Eliminar
                   <v-icon>mdi-minus</v-icon>
                 </v-btn>
-                <v-btn color="gd-primary-to-right" class="white--text font-weight-light rounded-lg" @click="addMascota()">
+                <v-btn color="gd-primary-to-right" class="white--text font-weight-light rounded-lg"
+                  @click="addMascota()">
                   Agregar
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
@@ -150,6 +155,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     props: {
       value: Object,
@@ -166,7 +172,7 @@
     },
     created() {
       this.getCuotas()
-    },  
+    },
     methods: {
       addMascota() {
         this.$set(this.socio.mascotas, this.socio.mascotas.length, {});
@@ -183,14 +189,17 @@
         this.$axios.get('/cuotas')
           .then(response => {
             this.cuotasList = response.data;
-            let defaultCuota = response.data.find((c)=>c.default)
-            if(!this.socio.cuota)
+            let defaultCuota = response.data.find((c) => c.default)
+            if (!this.socio.cuota)
               this.socio.cuota = defaultCuota.id
           })
           .catch(error => {
             console.log(error);
           });
       },
+      setValueCreatedAt(value) {
+        return moment(value).format('DD/MM/YYYY');
+      }
 
     },
     watch: {},
