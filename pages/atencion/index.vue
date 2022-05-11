@@ -127,7 +127,7 @@
             <v-icon color="white">mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text class="pa-4 ">
+        <v-card-text class="pa-4 overflow-card">
           <formSociosComponent :handler="createSocio" v-model="socio"></formSociosComponent>
         </v-card-text>
         <v-divider></v-divider>
