@@ -1,5 +1,5 @@
 <template>
-  <v-card class="rounded-xl">
+  <v-card class="rounded-xl" :height="height">
     <v-toolbar elevation="0" :color="color">
       <v-toolbar-title class="font-weight-light" :class="{'white--text':color!='transparent','black--text':color=='transparent'}">
         {{title}}
@@ -53,6 +53,10 @@
       title:{
         type:String,
         default: 'Productos'
+      },
+      height:{
+        type:String,
+        default: 'auto'
       }
     },
     data() {

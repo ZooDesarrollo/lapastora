@@ -26,7 +26,7 @@
             </v-card>
           </v-col>
           <v-col class="col-md-6 col-12">
-            <v-card class="rounded-xl" height="280">
+            <v-card class="rounded-xl" height="330">
               <v-toolbar elevation="0" color="primary" class="mt-2">
                 <v-toolbar-title class="font-weight-light white--text">
                   Datos de la factura
@@ -70,13 +70,22 @@
                       outlined
                     ></v-text-field>
                   </v-col>
+                  <v-col class="col-md-12 col-12">
+                    <v-select
+                      label="Iva incluido"
+                      dense
+                      :items="[{text:'Si',value:true},{text:'No',value:false}]"
+                      v-model="compra.iva_incluido"
+                      outlined
+                    ></v-select>
+                  </v-col>
 
                 </v-row>
               </v-card-text>
             </v-card>
           </v-col>
           <v-col class="col-md-6 col-12"> 
-            <ProductosListComponent color="primary" title="Seleccione los productos">
+            <ProductosListComponent color="primary" height="340" title="Seleccione los productos">
               <template v-slot:button="{ item }">
                 <v-btn @click="setItem(item)" v-if="!selectedItem(item)" color="gd-primary-to-right"
                   class="rounded-lg white--text font-weight-light">SELECCIONAR</v-btn>
@@ -97,12 +106,21 @@
               </v-toolbar>
               <v-divider></v-divider>
               <v-card-text>
-                <v-data-table :headers="headers" :items="compra.productos" hide-default-footer>
+                <v-data-table :headers="filterHeaders" :items="compra.productos" hide-default-footer>
                   <template v-slot:item.precio_unidad="{ item }">
                     <v-text-field type="number" outlined dense hide-details v-model="item.precio_unidad"></v-text-field>
                   </template>
                   <template v-slot:item.cantidad="{ item }">
                     <v-text-field type="number" outlined dense hide-details v-model="item.cantidad"></v-text-field>
+                  </template>
+                  <template v-slot:item.iva="{ item }">
+                    <v-text-field type="number" outlined dense hide-details v-model="item.iva"></v-text-field>
+                  </template>
+                  <template v-slot:item.descuento="{ item }">
+                    <v-input hide-details style="width:200px">
+                      <v-text-field type="number" class="rounded-r-0" width="40px" outlined dense hide-details v-model="item.descuento"></v-text-field>
+                      <v-select :items="[{text:'Porcentaje (%)',value:'porcentaje'},{text:'Fijo ($)',value:'fijo'}]" class="rounded-l-0" value="Porcentaje (%)"  outlined dense hide-details v-model="item.tipo_descuento"></v-select>
+                    </v-input>
                   </template>
                   <template v-slot:item.actions="{ item }">
                     <v-btn color="red" @click="removeItem(item)">
@@ -170,6 +188,14 @@
             text: 'Cantidad',
             value: 'cantidad'
           },
+          {
+            text: '% IVA',
+            value: 'iva'
+          },
+          {
+            text: 'Descuento',
+            value: 'descuento'
+          },
 
           {
             text: 'Acciones',
@@ -191,6 +217,7 @@
           precio_unidad: 0,
           entrega: 0,
           cantidad: 1,
+          descuento:0
         })
       },
       selectedItem(item) {
@@ -203,6 +230,16 @@
         await this.$axios.post('/compras-mercaderias', this.compra)
         this.successCompras = true
         this.$root.$emit('updateCompras', true)
+      }
+    },
+    computed:{
+      filterHeaders() {
+        return this.headers.filter((h)=>{
+          if(this.compra.iva_incluido) {
+            if(h.value == 'iva') return false
+          }
+          return h
+        })
       }
     }
   }

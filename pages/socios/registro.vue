@@ -43,6 +43,9 @@
         if(!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`
         }
+        if(!this.socio.user.password) {
+          this.socio.user.password = this.socio.user.username
+        }
         this.$axios.post('/users', this.socio.user).then(response => {
           this.socio.user = response.data
           this.$axios.post('/socios', this.socio).then(response => {

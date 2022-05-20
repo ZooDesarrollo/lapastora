@@ -34,7 +34,7 @@
                         <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
                           @click="()=>{
                       createSocioModal = true;
-                      }">Nuevo cliente</v-btn>
+                      }"><v-icon>mdi-plus</v-icon> cliente</v-btn>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -44,11 +44,16 @@
                 <v-card outlined class="rounded-xl">
                   <v-data-table show-select single-select v-model="selectedMascota" :items="atencion.socio.mascotas"
                     hide-default-footer :headers="headersMascotas">
-
                   </v-data-table>
+                  <v-card-text>
+                    <v-textarea hide-details class="mt-3" label="Observaciones" outlined v-model="atencion.mascota.observaciones"
+                      readonly></v-textarea>
+                  </v-card-text>
+                  <v-card-text>
+                    <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model="atencion.socio.payment_date"
+                      readonly></v-text-field>
+                  </v-card-text>
                 </v-card>
-                <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model="atencion.socio.payment_date"
-                  readonly></v-text-field>
               </v-col>
               <v-col class="col-md-4 col-12">
                 <v-text-field label="RAZA" readonly v-model="atencion.mascota.raza" outlined dense
@@ -102,11 +107,22 @@
               <v-data-table show-select single-select v-model="selectedAtencion" :headers="headers" hide-default-footer
                 :items="consultaItems">
                 <template v-slot:item.fecha="{ item }">
-                  {{formatDate(item.fecha)}}
+                  <v-btn outlined small 
+                  @click="()=>{
+                    openAtencionModal = true;
+                    atencion = item;
+                  }">
+                    <v-icon>mdi-magnify</v-icon> &nbsp;{{formatDate(item.fecha)}}
+                  </v-btn>
                 </template>
                 <template v-slot:item.hora="{ item }">
                   {{formatHour(item.hora)}}
                 </template>
+                <template v-slot:item.examenes="{ item }">
+                  <v-icon color="success" v-if="item.files.length>0">mdi-check</v-icon>
+                  <v-icon color="red" v-else>mdi-close</v-icon>
+                </template>
+
               </v-data-table>
             </v-card>
           </v-card-text>
@@ -153,7 +169,7 @@
           <v-icon color="white">mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <visitas-data-component class="overflow-card"  v-model="atencion" :handler="createAtencion" :mascota="mascota"
+      <visitas-data-component class="overflow-card" v-model="atencion" :handler="createAtencion" :mascota="mascota"
         @changeMascota="($e)=>{
             mascota = $e
           }"></visitas-data-component>
@@ -170,6 +186,21 @@
               mascota = $e
             }"></visitas-data-component>
     </v-dialog>
+
+
+    <v-dialog v-model="openAtencionModal" width="80%" height="auto" persistent>
+      <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
+        <v-toolbar-title>VER VISITA</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="openAtencionModal = false">
+          <v-icon color="white">mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <visitas-data-component class="overflow-card" readonly v-model="atencion"></visitas-data-component>
+    </v-dialog>
+
+
+
   </v-container>
 </template>
 
@@ -197,6 +228,7 @@
           user: {},
           mascotas: [{}]
         },
+        openAtencionModal:false,
         sociosList: [],
         selectedAtencion: [],
         consultaItems: [],
@@ -230,6 +262,9 @@
         }, {
           text: "Pronostico",
           value: "pronostico"
+        },{
+          text: "Examenes",
+          value: "examenes"
         }, {
           text: "Tratamiento",
           value: "tratamiento"
@@ -305,14 +340,15 @@
       },
       updateAtencion() {
         this.$axios.put('/atencion/' + this.atencion.id, this.atencion).then(async response => {
-          this.uploadFile(response.data.id, this.atencion.files)
-
+          console.log(this.atencion.mascota)
+          
           let uploadFiles = this.atencion.files.filter((file) => file instanceof File)
           this.uploadFile(response.data.id, uploadFiles)
           await this.getAtencionMascota(this.atencion.mascota)
           await this.updateMascota()
           this.modalUpdateAtencion = false
           this.selectedAtencion = []
+          
         }).catch(error => {
           console.log(error);
         });
@@ -365,9 +401,9 @@
       },
       uploadFile(idAtencion, files) {
         console.log
-        if(files.length == 0) return 
-        
-        
+        if (files.length == 0) return
+
+
         let data = new FormData()
         data.append('ref', 'atencion')
         data.append('refId', idAtencion)
@@ -405,7 +441,7 @@
         if (val.length > 0) {
           this.atencion = JSON.parse(JSON.stringify(val[0]))
         } else {
-          this.formatAtencion()
+          //this.formatAtencion()
         }
       }
     }

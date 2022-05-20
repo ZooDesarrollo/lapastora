@@ -100,9 +100,6 @@
       checkHandler() {
         if (!this.$refs.form.validate()) return
         this.$emit('input', this.atencion)
-        this.atencion = {
-          mascota: {}
-        }
         this.handler();
 
       },

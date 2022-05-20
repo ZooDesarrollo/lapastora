@@ -12,13 +12,13 @@
             <v-text-field label="CLIENTE AGREGADO" hide-details :value="setValueCreatedAt(socio.created_at)" outlined dense class="rounded-lg"></v-text-field>
           </v-col>
           <v-col class="col-12 col-md-6">
-            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" outlined dense :rules="rules.required"
+            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" outlined dense
               v-model="socio.name">
             </v-text-field>
-            <v-text-field label="APELLIDO" class="rounded-lg" outlined dense :rules="rules.required"
+            <v-text-field label="APELLIDO" class="rounded-lg" outlined dense
               v-model="socio.last_name">
             </v-text-field>
-            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense
+            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense  :rules="rules.required"
               v-model="socio.user.username">
             </v-text-field>
             <v-text-field label="DIRECCION" class="rounded-lg" outlined dense v-model="socio.address">
@@ -122,6 +122,16 @@
                       v-model="socio.mascotas[index].socio">
                     </v-select>
                   </v-col>
+                  <v-col class="col-12">
+                    <sociosCreateEspeciesComponent v-model="socio.mascotas[index].especie"></sociosCreateEspeciesComponent>
+                  </v-col>
+                  <v-col class="col-12 col-md-12">
+                    <v-textarea label="Observaciones" class="rounded-lg" outlined dense 
+                    v-model="socio.mascotas[index].observaciones">
+                    </v-textarea>
+                  </v-col>
+
+
                   <v-col class="col-12">
                     <v-divider></v-divider>
                   </v-col>

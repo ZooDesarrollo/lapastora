@@ -12,6 +12,9 @@
             <configuracionReferenciasComponent></configuracionReferenciasComponent>
           </v-card-text>
           <v-card-text>
+            <configuracionEspeciesComponent></configuracionEspeciesComponent>
+          </v-card-text>
+          <v-card-text>
             <configuracionCuotasComponent></configuracionCuotasComponent>
           </v-card-text>
           <v-card-text>
