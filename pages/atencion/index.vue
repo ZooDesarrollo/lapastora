@@ -225,14 +225,12 @@
           proximas: []
         },
         socio: {
-        socio: {
           suc:'CASA CENTRAL',
           socio:'SI',
           tipo:'Cliente final',
           user:{},
           mascotas: [{}],
           afiliacion:moment().format('YYYY-MM-DD'),
-        },
         },
         openAtencionModal:false,
         sociosList: [],
