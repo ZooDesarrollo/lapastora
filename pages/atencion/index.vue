@@ -303,10 +303,6 @@
         if(!this.socio.user.password) {
           this.socio.user.password = this.socio.user.username
         }
-        await this.$axios.post('/mascotas/createMultiple', this.socio.mascotas)
-          .then((data) => {
-            this.socio.mascotas = data.data
-          })
         const user = (await this.$axios.post('users/', this.socio.user)).data.id
         this.socio.user = user
         await this.$axios.post('/socios', this.socio).then(response => {
