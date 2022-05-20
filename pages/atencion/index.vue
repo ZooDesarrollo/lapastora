@@ -225,8 +225,14 @@
           proximas: []
         },
         socio: {
-          user: {},
-          mascotas: [{}]
+        socio: {
+          suc:'CASA CENTRAL',
+          socio:'SI',
+          tipo:'Cliente final',
+          user:{},
+          mascotas: [{}],
+          afiliacion:moment().format('YYYY-MM-DD'),
+        },
         },
         openAtencionModal:false,
         sociosList: [],
@@ -293,8 +299,11 @@
           })
       },
       async createSocio() {
-        if (!this.socio.user.email) {
+        if(!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`
+        }
+        if(!this.socio.user.password) {
+          this.socio.user.password = this.socio.user.username
         }
         await this.$axios.post('/mascotas/createMultiple', this.socio.mascotas)
           .then((data) => {
@@ -314,6 +323,8 @@
           console.log(error);
         });
       },
+
+      
       cleanSocio() {
         console.log(this.atencion);
         this.consultaItems = []
