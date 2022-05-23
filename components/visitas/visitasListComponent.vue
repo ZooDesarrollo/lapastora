@@ -107,7 +107,7 @@
         return "Seleccione una fecha"
       },
       getAtenciones() {
-        var query = "estado=Pendiente&con_costo=true"
+        var query = "estado=Pendiente"
         if(this.search.search) {
           query = `&_where[_or][0][socio.name_contains]=${this.search.search}&_where[_or][1][mascota.nombre_contains]=${this.search.search}`
         }
