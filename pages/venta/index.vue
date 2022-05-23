@@ -335,7 +335,7 @@
         this.showProductsModal = false
       },
       checkTotal(item) {
-        if(!item.con_costo) return 'Sin costo'
+        if(!item.con_costo && item.tipo =='consulta') return 'Sin costo'
         return Math.round((item.precio * item.cantidad) - (item.precio * item.cantidad) * (item.descuento / 100))
       },
       addProduct() {
