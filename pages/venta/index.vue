@@ -117,7 +117,7 @@
                     </v-text-field>
                   </v-col>
                   <v-col>
-                    <v-text-field type="number" v-model="producto.precio" filled :readonly="producto.tipo != 'consulta'"
+                    <v-text-field  v-model="producto.precio" filled :readonly="producto.tipo != 'consulta'"
                       prepend-inner-icon="mdi-currency-usd" label="Precio unidad" outlined dense></v-text-field>
                   </v-col>
                   <v-col class="col-md-3 col-12">
