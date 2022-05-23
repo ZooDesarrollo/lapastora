@@ -40,6 +40,15 @@
             </v-textarea>
           </v-col>
           <v-col class="col-12">
+            <v-checkbox outlined  :readonly="readonly" v-model="atencion.con_costo" label="Consulta con costo">
+            </v-checkbox>
+          </v-col>
+          <v-col class="col-12" v-show="atencion.con_costo">
+            <v-text-field outlined  :readonly="readonly" v-model="atencion.costo" type="number" label="Costo ($)">
+            </v-text-field>
+          </v-col>
+
+          <v-col class="col-12">
             <UploadFilesComponent v-model="atencion.files" :readonly="readonly"></UploadFilesComponent>
           </v-col>
 

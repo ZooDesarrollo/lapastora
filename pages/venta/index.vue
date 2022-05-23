@@ -314,7 +314,7 @@
         if (tipo == 'consulta') {
           this.producto = {
             nombre: 'Consulta',
-            precio: 0,
+            precio: item.costo,
             cantidad: 1,
             descuento: 0,
             tipo: tipo,

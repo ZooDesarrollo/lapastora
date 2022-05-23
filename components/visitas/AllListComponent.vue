@@ -150,11 +150,11 @@
       }
     },
     mounted() {
-      this.getAtenciones()
-      this.getProximasAtenciones()
       this.search.fecha = moment().format('YYYY-MM-DD')
       this.searchProximas.fecha_gte = moment().format('YYYY-MM-DD')
       this.searchProximas.fecha_lte = moment().add(7, 'days').format('YYYY-MM-DD')
+      this.getAtenciones()
+      this.getProximasAtenciones()
     },
     methods: {
       getAtenciones() {

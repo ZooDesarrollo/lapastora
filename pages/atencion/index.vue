@@ -34,7 +34,9 @@
                         <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
                           @click="()=>{
                       createSocioModal = true;
-                      }"><v-icon>mdi-plus</v-icon> cliente</v-btn>
+                      }">
+                          <v-icon>mdi-plus</v-icon> cliente
+                        </v-btn>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -46,8 +48,8 @@
                     hide-default-footer :headers="headersMascotas">
                   </v-data-table>
                   <v-card-text>
-                    <v-textarea hide-details class="mt-3" label="Observaciones" outlined v-model="atencion.mascota.observaciones"
-                      readonly></v-textarea>
+                    <v-textarea hide-details class="mt-3" label="Observaciones" outlined
+                      v-model="atencion.mascota.observaciones" readonly></v-textarea>
                   </v-card-text>
                   <v-card-text>
                     <v-text-field class="mt-3" label="Ultima cuota paga" outlined v-model="atencion.socio.payment_date"
@@ -107,8 +109,7 @@
               <v-data-table show-select single-select v-model="selectedAtencion" :headers="headers" hide-default-footer
                 :items="consultaItems">
                 <template v-slot:item.fecha="{ item }">
-                  <v-btn outlined small 
-                  @click="()=>{
+                  <v-btn outlined small @click="()=>{
                     openAtencionModal = true;
                     atencion = item;
                   }">
@@ -158,6 +159,9 @@
         }" color="primary">
             AGREGAR
           </v-btn>
+        </template>
+        <template v-slot:extraFields>
+          <SociosFindSociosComponent v-model="searchSocios.id"></SociosFindSociosComponent>
         </template>
       </SociosListSociosComponent>
     </v-dialog>
@@ -225,15 +229,16 @@
           proximas: []
         },
         socio: {
-          suc:'CASA CENTRAL',
-          socio:'SI',
-          tipo:'Cliente final',
-          user:{},
+          suc: 'CASA CENTRAL',
+          socio: 'SI',
+          tipo: 'Cliente final',
+          user: {},
           mascotas: [{}],
-          afiliacion:moment().format('YYYY-MM-DD'),
+          afiliacion: moment().format('YYYY-MM-DD'),
         },
-        openAtencionModal:false,
+        openAtencionModal: false,
         sociosList: [],
+        searchSocios: {},
         selectedAtencion: [],
         consultaItems: [],
         consultaItemsAll: [],
@@ -266,7 +271,7 @@
         }, {
           text: "Pronostico",
           value: "pronostico"
-        },{
+        }, {
           text: "Examenes",
           value: "examenes"
         }, {
@@ -288,7 +293,9 @@
     },
     methods: {
       getSocios() {
-        this.$axios.get('/socios')
+        this.$axios.get('/socios', {
+            params: this.searchSocios
+          })
           .then(response => {
             this.sociosList = response.data
           })
@@ -297,10 +304,10 @@
           })
       },
       async createSocio() {
-        if(!this.socio.user.email) {
+        if (!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`
         }
-        if(!this.socio.user.password) {
+        if (!this.socio.user.password) {
           this.socio.user.password = this.socio.user.username
         }
         const user = (await this.$axios.post('users/', this.socio.user)).data.id
@@ -318,7 +325,7 @@
         });
       },
 
-      
+
       cleanSocio() {
         console.log(this.atencion);
         this.consultaItems = []
@@ -346,14 +353,14 @@
       updateAtencion() {
         this.$axios.put('/atencion/' + this.atencion.id, this.atencion).then(async response => {
           console.log(this.atencion.mascota)
-          
+
           let uploadFiles = this.atencion.files.filter((file) => file instanceof File)
           this.uploadFile(response.data.id, uploadFiles)
           await this.getAtencionMascota(this.atencion.mascota)
           await this.updateMascota()
           this.modalUpdateAtencion = false
           this.selectedAtencion = []
-          
+
         }).catch(error => {
           console.log(error);
         });
@@ -448,6 +455,13 @@
         } else {
           //this.formatAtencion()
         }
+      },
+      searchSocios: {
+        handler() {
+          this.getSocios()
+        },
+        deep:true
+
       }
     }
   }
