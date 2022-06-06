@@ -1,26 +1,29 @@
 <template>
   <v-form ref="form">
     <v-card>
-      <v-card-text class="overflow-card" >
+      <v-card-text class="overflow-card">
         <v-row>
           <v-col class="col-12">
-            <v-text-field type="text" label="SOCIO" readonly outlined filled dense :value="setSocioName(atencion.mascota)"
-              class="rounded-lg white--text"> </v-text-field>
+            <v-text-field type="text" label="SOCIO" readonly outlined filled dense
+              :value="setSocioName(atencion.mascota)" class="rounded-lg white--text"> </v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" type="date" v-model="atencion.fecha" label="Fecha"></v-text-field>
+            <v-text-field outlined :readonly="readonly" type="date" v-model="atencion.fecha" label="Fecha">
+            </v-text-field>
           </v-col>
           <v-col class="col-12">
             <v-text-field outlined :readonly="readonly" type="time" v-model="atencion.hora" label="Hora"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" v-model="atencion.mascota.peso" type="number" label="Peso"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.mascota.peso" type="number" label="Peso">
+            </v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" v-model="atencion.temperatura" type="number" label="Temperatura"></v-text-field>
+            <v-text-field outlined :readonly="readonly" v-model="atencion.temperatura" type="number"
+              label="Temperatura"></v-text-field>
           </v-col>
           <v-col class="col-12">
-              <createReferenciasComponent v-model="atencion.referencias"></createReferenciasComponent>
+            <createReferenciasComponent v-model="atencion.referencias"></createReferenciasComponent>
           </v-col>
           <v-col class="col-12">
             <v-text-field outlined :readonly="readonly" v-model="atencion.anamnesis" label="Anamnesis"></v-text-field>
@@ -32,19 +35,42 @@
             <v-textarea outlined :readonly="readonly" v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined type="date" :readonly="readonly" v-model="atencion.proxima_consulta" label="Fecha de proxima consulta">
-            </v-text-field>
+            <v-select outlined :readonly="readonly" v-model="proximaConsulta" :items="['Si','No']"
+              label="Tendra proxima consulta?"></v-select>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined type="date" :readonly="readonly" v-model="atencion.proxima_consulta" label="Motivo de proxima consulta">
-            </v-textarea>
+            <v-card class="rounded-lg" outlined v-show="proximaConsulta == 'Si'">
+              <v-card-title class="font-weight-light">Proxima consulta</v-card-title>
+              <v-card-text>
+                <v-row>
+                  <v-col class="col-12">
+                    <v-text-field outlined type="date" :readonly="readonly" v-model="atencion.fecha_proxima_consulta"
+                      label="Fecha de proxima consulta">
+                    </v-text-field>
+                  </v-col>
+                  <v-col class="col-12">
+                    <v-text-field outlined type="time" :readonly="readonly" v-model="atencion.hora_proxima_consulta"
+                      label="Hora de proxima consulta">
+                    </v-text-field>
+                  </v-col>
+                  <v-col class="col-12">
+                    <v-textarea outlined :readonly="readonly" v-model="atencion.proxima_consulta"
+                      label="Motivo de proxima consulta">
+                    </v-textarea>
+                  </v-col>
+                  <v-col class="col-12">
+                    <createReferenciasComponent v-model="atencion.proxima_referencia"></createReferenciasComponent>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
           </v-col>
           <v-col class="col-12">
-            <v-checkbox outlined  :readonly="readonly" v-model="atencion.con_costo" label="Consulta con costo">
+            <v-checkbox outlined :readonly="readonly" v-model="atencion.con_costo" label="Consulta con costo">
             </v-checkbox>
           </v-col>
           <v-col class="col-12" v-show="atencion.con_costo">
-            <v-text-field outlined  :readonly="readonly" v-model="atencion.costo" type="number" label="Costo ($)">
+            <v-text-field outlined :readonly="readonly" v-model="atencion.costo" type="number" label="Costo ($)">
             </v-text-field>
           </v-col>
 
@@ -83,14 +109,15 @@
     props: {
       value: Object,
       handler: Function,
-      readonly:{
-        default:false,
-        type:Boolean
+      readonly: {
+        default: false,
+        type: Boolean
       }
     },
     data() {
       return {
         atencion: this.value,
+        proximaConsulta: 'No',
         rules: {
           required: [value => !!value || 'Este campo es requerido.'],
         }
@@ -126,9 +153,9 @@
         handler(newValue) {
           this.atencion = newValue
         },
-        deep:true
+        deep: true
+      }
     }
-  }
   }
 
 </script>

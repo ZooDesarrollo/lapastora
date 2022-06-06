@@ -1,6 +1,6 @@
 <template>
   <v-container justify-center align-center fill-height>
-    <v-form ref="signup">
+    <v-form ref="signup" @keyup.enter="login()">
       <v-card class="radius-10" max-width="800">
         <v-toolbar color="primary"  elevation="0">
           <v-toolbar-title class="white--text font-weight-light text-center full-width">Iniciar sesion

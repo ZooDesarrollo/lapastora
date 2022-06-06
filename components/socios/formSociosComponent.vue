@@ -18,7 +18,7 @@
             <v-text-field label="APELLIDO" class="rounded-lg" outlined dense
               v-model="socio.last_name">
             </v-text-field>
-            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense  :rules="rules.required"
+            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense  
               v-model="socio.user.username">
             </v-text-field>
             <v-text-field label="DIRECCION" class="rounded-lg" outlined dense v-model="socio.address">

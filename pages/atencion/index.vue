@@ -304,6 +304,9 @@
           })
       },
       async createSocio() {
+        if(!this.socio.user.username) {
+          this.socio.user.username = Math.floor(Math.random()*90000) + 10000;
+        }
         if (!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`
         }
@@ -339,11 +342,14 @@
       createAtencion() {
         this.atencion.hora = `${this.atencion.hora}:00.000`
         this.$axios.post('/atencion', this.atencion).then(response => {
+          if (this.atencion.proxima_consulta) {
+            this.addToAgenda()
+          }
           this.getAtencionMascota(this.atencion.mascota)
 
           let uploadFiles = this.atencion.files.filter((file) => file instanceof File)
-
           this.uploadFile(response.data.id, uploadFiles)
+          console.log(this.atencion)
           this.formatAtencion()
           this.modalAtencion = false
         }).catch(error => {
@@ -366,16 +372,48 @@
         });
       },
       formatAtencion() {
+        let atencion = JSON.parse(JSON.stringify(this.atencion))
         this.atencion = {
           files: [],
-          socio: {
-            mascotas: []
-          },
-          mascota: {},
+          socio: atencion.socio,
+          mascota: atencion.mascota,
           productos: [],
           proximas: []
         }
         this.$forceUpdate()
+      },
+
+      //add to agenda 
+      addToAgenda() {
+        if (this.atencion.hora_proxima_consulta)
+          this.atencion.hora_proxima_consulta = this.atencion.hora_proxima_consulta + ':00.00'
+
+        var agenda = {
+          type: 'consulta',
+          consulta: {
+            socio: this.atencion.socio,
+            tipo_consulta: 'Consulta'
+          },
+          fecha: this.atencion.fecha_proxima_consulta,
+          hora: this.atencion.hora_proxima_consulta,
+          titulo: 'Nueva consulta para ' + this.atencion.mascota.nombre,
+          detalles: this.atencion.proxima_consulta,
+          referencias: this.atencion.proxima_referencia
+        }
+
+        this.$axios.post('/agendas', agenda).then(data => {
+          //clone atencion 
+          let proximaAtencion = {
+            socio: this.atencion.socio,
+            mascota: this.atencion.mascota,
+            fecha: agenda.fecha,
+            hora: agenda.hora,
+            detalles: agenda.detalles,
+            referencias: agenda.referencias,
+          }
+          this.$axios.post('/atencion', proximaAtencion)
+        })
+
       },
       updateMascota() {
         this.$axios.put('/mascotas/' + this.mascota.id, this.mascota).then(response => {}).catch(error => {
@@ -460,7 +498,7 @@
         handler() {
           this.getSocios()
         },
-        deep:true
+        deep: true
 
       }
     }
