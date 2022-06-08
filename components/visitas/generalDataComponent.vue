@@ -177,7 +177,9 @@
             params: {...this.searchSocios,_start:this.pageItems,_limit:this.pageItems+sizePage}
           })
           .then(response => {
+            console.log("aca")
             this.sociosList = response.data
+            console.log(this.sociosList)
           })
           .catch(error => {
             console.log(error)
@@ -237,7 +239,6 @@
         }
       },
 
-    },
     searchSocios: {
       handler() {
         this.getSocios()
@@ -245,6 +246,7 @@
       deep: true
 
     }
+    },
 
   }
 
