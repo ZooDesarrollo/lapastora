@@ -11,7 +11,7 @@
       <slot name="extraFields"></slot>
     </v-card-title>
     <v-card-text>
-      <v-data-table :items="value" :headers="headers" hide-default-footer>
+      <v-data-table :items="value" :headers="headers" :items-per-page="-1" hide-default-footer>
         <template v-slot:item.payment_date="{ item }">
           {{formatDate(item.payment_date)}}
         </template>
