@@ -7,6 +7,9 @@
           <v-text-field outlined v-model="user.username" type="number" label="CI"></v-text-field>
         </v-col>
         <v-col class="col-12">
+          <v-text-field outlined v-model="user.name" type="text" label="Nombre"></v-text-field>
+        </v-col>
+        <v-col class="col-12">
             <v-text-field outlined v-model="user.password" type="password" label="Password"></v-text-field>
           </v-col>
         </v-row>

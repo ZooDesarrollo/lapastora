@@ -117,9 +117,9 @@
                     <v-text-field type="number" outlined dense hide-details v-model="item.iva"></v-text-field>
                   </template>
                   <template v-slot:item.descuento="{ item }">
-                    <v-input hide-details style="width:200px">
-                      <v-text-field type="number" class="rounded-r-0" width="40px" outlined dense hide-details v-model="item.descuento"></v-text-field>
-                      <v-select :items="[{text:'Porcentaje (%)',value:'porcentaje'},{text:'Fijo ($)',value:'fijo'}]" class="rounded-l-0" value="Porcentaje (%)"  outlined dense hide-details v-model="item.tipo_descuento"></v-select>
+                    <v-input hide-details style="width:100%">
+                      <v-text-field type="number" class="rounded-r-0" style="width:50%" outlined dense hide-details v-model="item.descuento"></v-text-field>
+                      <v-select style="width:50%" :items="[{text:'Porcentaje (%)',value:'porcentaje'},{text:'Fijo ($)',value:'fijo'}]" class="rounded-l-0" value="Porcentaje (%)"  outlined dense hide-details v-model="item.tipo_descuento"></v-select>
                     </v-input>
                   </template>
                   <template v-slot:item.actions="{ item }">

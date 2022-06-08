@@ -28,8 +28,7 @@
             <v-text-field label="RAZON SOCIAL (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" outlined
               dense>
             </v-text-field>
-            <v-select label="TIPO" :items="['Cliente final']" v-model="socio.tipo" class="rounded-lg" outlined dense
-              :rules="rules.required">
+            <v-select label="TIPO" :items="['Cliente final']" v-model="socio.tipo" class="rounded-lg" outlined dense>
             </v-select>
 
           </v-col>
@@ -40,11 +39,9 @@
             <v-text-field label="FECHA AFILIACION (Opcional)" type="date" v-model="socio.afiliacion" class="rounded-lg"
               outlined dense>
             </v-text-field>
-            <v-select label="SOCIO" :items="['Si','No']" v-model="socio.socio" class="rounded-lg" outlined dense
-              :rules="rules.required">
+            <v-select label="SOCIO" :items="['Si','No']" v-model="socio.socio" class="rounded-lg" outlined dense>
             </v-select>
-            <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" outlined dense
-              :rules="rules.required">
+            <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" outlined dense>
             </v-select>
             <v-text-field label="TELEFONO" type="number" class="rounded-lg" outlined dense v-model="socio.phone">
             </v-text-field>
@@ -69,7 +66,7 @@
             </v-col>
           </template>
           <v-col class="col-12 col-md-12">
-            <v-card outlined dense :rules="rules.required" class="rounded-xl">
+            <v-card outlined dense class="rounded-xl">
               <v-toolbar color="gd-primary-to-right white--text" elevation="0">
                 <v-toolbar-title class="font-weight-light">
                   Mascotas
@@ -78,23 +75,23 @@
               <v-card-text>
                 <v-row v-for="(mascota,index) in socio.mascotas" :key="index">
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="NOMBRE" class="rounded-lg" outlined dense :rules="rules.required"
+                    <v-text-field label="NOMBRE" class="rounded-lg" outlined dense
                       v-model="socio.mascotas[index].nombre">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="RAZA" class="rounded-lg" outlined dense :rules="rules.required"
+                    <v-text-field label="RAZA" class="rounded-lg" outlined dense
                       v-model="socio.mascotas[index].raza">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="COLOR" class="rounded-lg" outlined dense :rules="rules.required"
+                    <v-text-field label="COLOR" class="rounded-lg" outlined dense
                       v-model="socio.mascotas[index].color">
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
                     <v-text-field type="date" label="Fecha de nacimiento" class="rounded-lg" outlined dense
-                      :rules="rules.required" v-model="socio.mascotas[index].fecha_nac">
+                      v-model="socio.mascotas[index].fecha_nac">
                     </v-text-field>
                   </v-col>
 
@@ -108,7 +105,7 @@
                     },{
                       text:'Otro',
                       value: 'NN'
-                    }]" class="rounded-lg" outlined dense :rules="rules.required" v-model="socio.mascotas[index].sexo">
+                    }]" class="rounded-lg" outlined dense  v-model="socio.mascotas[index].sexo">
                     </v-select>
                   </v-col>
                   <v-col class="col-12 col-md-12">
@@ -118,7 +115,7 @@
                     },{
                       text:'No',
                       value: 'No'
-                    }]" class="rounded-lg" outlined dense :rules="rules.required"
+                    }]" class="rounded-lg" outlined dense
                       v-model="socio.mascotas[index].socio">
                     </v-select>
                   </v-col>

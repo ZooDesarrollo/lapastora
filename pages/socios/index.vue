@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
-    <SociosListSociosComponent v-model="sociosList">
+    <SociosListSociosComponent @prevPage="getSocios('prev')"
+        @nextPage="getSocios('next')" v-model="sociosList">
       <template v-slot:extraFields>
         <SociosFindSociosComponent v-model="search.id"></SociosFindSociosComponent>
       </template>
@@ -10,15 +11,14 @@
         </v-btn>
       </template>
       <template v-slot:button="{ item }">
-        <v-btn 
-          class="gd-primary-to-right font-weight-light rounded-lg white--text"
-           @click="()=>{
+        <v-btn class="gd-primary-to-right font-weight-light rounded-lg white--text" @click="()=>{
           openModalPaymentServices = true;
           dataPayment.client = item
           }" color="primary">
           VALIDAR PAGO
         </v-btn>
-        <v-btn class="gd-primary-to-right font-weight-light rounded-lg white--text" :to="`/socios/editar/${item.id}`" color="primary">
+        <v-btn class="gd-primary-to-right font-weight-light rounded-lg white--text" :to="`/socios/editar/${item.id}`"
+          color="primary">
           EDITAR
         </v-btn>
       </template>
@@ -28,14 +28,18 @@
         <v-toolbar color="gd-primary-to-right font-weight-light" elevation="0">
           <v-toolbar-title class="white--text">Pagar servicios</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon @click="openModalPaymentServices = false"><v-icon color="white">mdi-close</v-icon></v-btn>
+          <v-btn icon @click="openModalPaymentServices = false">
+            <v-icon color="white">mdi-close</v-icon>
+          </v-btn>
         </v-toolbar>
         <v-card-text class="ma-2">
-          <v-text-field outlined dense label="Cantidad de meses" hide-details type="number" v-model="dataPayment.months"></v-text-field>
+          <v-text-field outlined dense label="Cantidad de meses" hide-details type="number"
+            v-model="dataPayment.months"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="gd-primary-to-right" class="font-weight-light white--text rounded-lg" @click="openAlertPayment = true">Pagar servicios</v-btn>
+          <v-btn color="gd-primary-to-right" class="font-weight-light white--text rounded-lg"
+            @click="openAlertPayment = true">Pagar servicios</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -64,22 +68,35 @@
       return {
         openModalPaymentServices: false,
         openAlertPayment: false,
-        dataPayment:{
-          months:1,
-          client:{}
+        dataPayment: {
+          months: 1,
+          client: {}
         },
-        search:{},
-        sociosList: []
+        search: {},
+        sociosList: [],
+        pageItems: 0
       }
     },
     created() {
       this.getSocios()
     },
     methods: {
-      getSocios() {
-        this.$axios.get('/socios',{
-          params:this.search
-        })
+      getSocios(page = null) {
+
+        if (page == 'prev' && this.pageItems - 10 >= 0) {
+          this.pageItems -= 10
+        } else if (page == 'next') {
+          this.pageItems += 10
+        }
+
+
+        this.$axios.get('/socios', {
+            params: {
+              ...this.search,
+              _start: this.pageItems,
+              _limit: this.pageItems + 10
+            }
+          })
           .then(response => {
             this.sociosList = response.data
           })
@@ -88,20 +105,20 @@
           })
       },
       payServices() {
-        this.dataPayment.client.payment_date=moment().add(this.dataPayment.months,'months').format('YYYY-MM-DD')
-        this.$axios.put(`/socios/${this.dataPayment.client.id}`,this.dataPayment.client).then(response => {
+        this.dataPayment.client.payment_date = moment().add(this.dataPayment.months, 'months').format('YYYY-MM-DD')
+        this.$axios.put(`/socios/${this.dataPayment.client.id}`, this.dataPayment.client).then(response => {
           this.openModalPaymentServices = false;
           this.openAlertPayment = false
           this.getSocios();
         })
       }
     },
-    watch:{
-      search:{
-        handler(){
+    watch: {
+      search: {
+        handler() {
           this.getSocios()
         },
-        deep:true
+        deep: true
       }
     }
   }

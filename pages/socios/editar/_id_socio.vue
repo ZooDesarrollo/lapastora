@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <formSociosComponent v-if="showForm" :handler="editSocio" v-model="socio"></formSociosComponent>
+    <sociosFormComponent v-if="showForm" :handler="editSocio" v-model="socio"></sociosFormComponent>
     <modal-success :action="()=>{
       this.createSocioModal = false
       }" v-model="createSocioModal">
@@ -17,10 +17,8 @@
 </template>
 
 <script>
-  import FormSociosComponent from '~/components/socios/formSociosComponent.vue'
   export default {
     components: {
-      FormSociosComponent
     },
     data() {
       return {

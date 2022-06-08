@@ -209,6 +209,9 @@
         headers: [{
           value: 'username',
           text: 'CI',
+        },{
+          value: 'name',
+          text: 'Nombre',
         }, {
           text: 'Editar socios',
           value: 'permisos.socios',

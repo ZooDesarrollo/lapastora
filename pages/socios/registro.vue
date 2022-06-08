@@ -1,8 +1,8 @@
 <template>
   <v-container fluid>
-    <formSociosComponent :handler="createSocio" v-model="socio">
+    <sociosFormComponent :handler="createSocio" v-model="socio">
       Nuevo cliente
-    </formSociosComponent>
+    </sociosFormComponent>
     <modal-success :action="()=>{
       this.createSocioModal = false
       }" v-model="createSocioModal">
@@ -19,11 +19,9 @@
 </template>
 
 <script>
-  import FormSociosComponent from '~/components/socios/formSociosComponent.vue'
   import moment from 'moment'
   export default {
     components: {
-      FormSociosComponent
     },
     data() {
       return {

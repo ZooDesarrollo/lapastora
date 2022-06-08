@@ -40,7 +40,7 @@
                       </v-menu>
                     </v-col>
                     <v-col class="col-md-4">
-                      <v-select outlined dense :items="['Factura','Boleta',{value:'NotaCredito',text:'Nota de credito'},{value:'NotaDebito',text:'Nota de debito'}]" :rules="rules.required" v-model="venta.tipo"
+                      <v-select outlined dense :items="['Efectivo','Factura','Boleta',{value:'NotaCredito',text:'Nota de credito'},{value:'NotaDebito',text:'Nota de debito'}]" :rules="rules.required" v-model="venta.tipo"
                         label="Tipo"></v-select>
                     </v-col>
                     <v-col class="col-md-4">
@@ -233,6 +233,7 @@
     data() {
       return {
         venta: {
+          tipo:'Efectivo',
           cliente: {},
           productos: []
         },

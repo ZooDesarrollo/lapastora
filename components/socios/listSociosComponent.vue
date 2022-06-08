@@ -20,15 +20,24 @@
         </template>
       </v-data-table>
     </v-card-text>
+    <v-card-actions class="d-flex justify-center">
+      <v-btn small fab class="rounded-lg mr-2" @click="$emit('prevPage')">
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+      <v-btn small fab class="rounded-lg" @click="$emit('nextPage')">
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
+    </v-card-actions>
+
   </v-card>
 </template>
 
 <script>
   import moment from 'moment'
   export default {
-    props:{
-      value:{
-        type:Array,
+    props: {
+      value: {
+        type: Array,
         default: () => []
       }
     },
@@ -41,14 +50,14 @@
           {
             text: 'DNI',
             value: 'user.username'
-          },{
-            text:'Ultima cuota paga',
-            value:'payment_date'
+          }, {
+            text: 'Ultima cuota paga',
+            value: 'payment_date'
           },
           {
             text: 'Acciones',
             value: 'actions',
-            align:'right'
+            align: 'right'
           }
         ],
         sociosList: [],
@@ -57,9 +66,10 @@
     },
     methods: {
       formatDate(date) {
-        if(date) {
+        if (date) {
           return moment(date).format('DD/MM/YYYY')
-llllllllllll3        } else {
+          llllllllllll3
+        } else {
           return 'Pago aun no realizado'
         }
       },
