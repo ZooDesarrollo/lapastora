@@ -82,10 +82,12 @@
     },
     methods: {
       getSocios(page = null) {
-        if (page == 'prev' && this.pageItems - 10 >= 0) {
-          this.pageItems -= 10
+                let sizePage = 25
+
+        if (page == 'prev' && this.pageItems - sizePage >= 0) {
+          this.pageItems -= sizePage
         } else if (page == 'next') {
-          this.pageItems += 10
+          this.pageItems += sizePage
         }
 
         if(this.search.id){
@@ -96,7 +98,7 @@
             params: {
               ...this.search,
               _start: this.pageItems,
-              _limit: this.pageItems + 10
+              _limit: this.pageItems + sizePage
             }
           })
           .then(response => {
