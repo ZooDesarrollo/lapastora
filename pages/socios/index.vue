@@ -82,13 +82,15 @@
     },
     methods: {
       getSocios(page = null) {
-
         if (page == 'prev' && this.pageItems - 10 >= 0) {
           this.pageItems -= 10
         } else if (page == 'next') {
           this.pageItems += 10
         }
 
+        if(this.search.id){
+          this.pageItems = 0
+        }
 
         this.$axios.get('/socios', {
             params: {
