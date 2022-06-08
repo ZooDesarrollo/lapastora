@@ -162,7 +162,8 @@
     },
     methods: {
       getSocios(page = null) {
-        let sizePage = 25
+          let sizePage = 25
+          this.sociosList = []
           if (page =='prev' && this.pageItems - sizePage >= 0) {
             this.pageItems -= sizePage
           } else if (page == 'next') {
