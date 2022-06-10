@@ -60,13 +60,13 @@
               class="rounded-lg white--text"> </v-text-field>
             <v-select :items="[{
                       text:'Macho',
-                      value: 'F'
+                      value: 'Macho'
                     },{
                       text:'Hembra',
-                      value: 'M'
+                      value: 'H'
                     },{
-                      text:'Otro',
-                      value: 'NN'
+                      text:'CASTRADO',
+                      value: 'C'
                     }]" label="SEXO" outlined dense v-model="value.mascota.sexo" readonly
               class="rounded-lg white--text">
             </v-select>

@@ -98,13 +98,13 @@
                   <v-col class="col-12 col-md-12">
                     <v-select label="SEXO" :items="[{
                       text:'Macho',
-                      value: 'F'
+                      value: 'Macho'
                     },{
                       text:'Hembra',
-                      value: 'M'
+                      value: 'H'
                     },{
-                      text:'Otro',
-                      value: 'NN'
+                      text:'CASTRADO',
+                      value: 'C'
                     }]" class="rounded-lg" outlined dense  v-model="socio.mascotas[index].sexo">
                     </v-select>
                   </v-col>
