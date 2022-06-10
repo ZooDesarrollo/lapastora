@@ -2,7 +2,7 @@
   <div>
     <v-card class="rounded-xl">
       <v-toolbar color="gd-primary-to-right" elevation="0">
-        <v-toolbar-title class="white--text font-weight-light">Proximas consultas</v-toolbar-title>
+        <v-toolbar-title class="white--text font-weight-light">Consultas</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn outlined class="white--text font-weight-light" @click="exportDataProximas()">
           Descargar&nbsp;<v-icon>mdi-download</v-icon>
@@ -11,18 +11,18 @@
       <v-card-title>
         <v-row>
           <v-col class="col-12">
-            <visitasCreateReferenciasComponent v-model="searchProximas.referencias"></visitasCreateReferenciasComponent>
+            <visitasCreateReferenciasComponent v-model="search.referencias"></visitasCreateReferenciasComponent>
           </v-col>
           <v-col class="col-12">
             <v-input hide-details>
-              <v-text-field hide-details v-model="searchProximas.fecha_gte" type="date" class="rounded-r-0" height="40"
+              <v-text-field hide-details v-model="search.fecha_gte" type="date" class="rounded-r-0" height="40"
                 dense outlined label="Fecha desde"></v-text-field>
-              <v-text-field hide-details v-model="searchProximas.fecha_lte" type="date" class="rounded-l-0" height="40"
+              <v-text-field hide-details v-model="search.fecha_lte" type="date" class="rounded-l-0" height="40"
                 dense outlined label="Fecha hasta"></v-text-field>
             </v-input>
           </v-col>
           <v-col class="col-12">
-            <v-btn @click="getProximasAtenciones()" color="gd-primary-to-right" height="40" depressed
+            <v-btn @click="getAtenciones()" color="gd-primary-to-right" height="40" depressed
               class="white--text font-weight-light" block>
               Buscar&nbsp;<v-icon>mdi-magnify</v-icon>
             </v-btn>
@@ -32,7 +32,7 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-data-table :headers="headersProximas" hide-default-footer :items="itemsProximas">
+        <v-data-table :headers="headers" hide-default-footer :items="items.data">
           <template v-slot:item.fecha="{ item }">
             {{formatDate(item.fecha)}}
           </template>
@@ -45,6 +45,9 @@
           </template>
         </v-data-table>
       </v-card-text>
+      <v-card-actions class="d-flex justify-center">
+        <v-pagination :total-visible="10" :length="Math.ceil(items.length/25)" v-model="items.page"></v-pagination>
+      </v-card-actions>
     </v-card>
     <v-dialog v-model="openAtencionModal" width="80%" height="auto" persistent>
       <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
@@ -93,8 +96,11 @@
           text: "Tratamiento",
           value: "tratamiento"
         }],
-        items: [],
-        search: {},
+        items: {
+          data:[],
+          length:0,
+          page:1
+        },
         atencion: {},
         headersProximas: [{
           text: "Fecha",
@@ -109,50 +115,49 @@
           text: "Nombre de la mascota",
           value: "mascota.nombre"
         }, {
-          text: "Motivo",
-          value: "referencias.nombre"
+          text: "Anamnesis",
+          value: "anamnesis"
         }],
-        itemsProximas: [],
-        searchProximas: {},
+        search: {},
         openAtencionModal: false
       }
     },
     mounted() {
-      this.search.fecha = moment().format('YYYY-MM-DD')
-      this.searchProximas.fecha_gte = moment().format('YYYY-MM-DD')
-      this.searchProximas.fecha_lte = moment().add(7, 'days').format('YYYY-MM-DD')
+      this.search.fecha_gte = moment().format('YYYY-MM-DD')
+      this.search.fecha_lte = moment().add(7, 'days').format('YYYY-MM-DD')
       this.getAtenciones()
-      this.getProximasAtenciones()
     },
     methods: {
-      getAtenciones() {
-        this.$axios.get('/atencion', {
+      async getAtenciones() {
+        this.search._start = 25*(this.items.page-1)
+        this.search._limit = 25*(this.items.page)
+        this.items.data = []
+        await this.$axios.get('/atencion', {
             params: this.search
           })
           .then(response => {
-            this.items = response.data
+            this.items.data = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        await this.$axios.get('/atencion/count', {
+            params: this.search
+          })
+          .then(response => {
+            this.items.length = response.data
           })
           .catch(error => {
             console.log(error)
           })
 
       },
-      getProximasAtenciones() {
-        this.$axios.get('/atencion', {
-            params: this.searchProximas
-          })
-          .then(response => {
-            this.itemsProximas = response.data
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
       formatDate(date) {
         let finalDate = date.split('-')
         return `${finalDate[2]}/${finalDate[1]}/${finalDate[0]}`
       },
       formatHour(hour) {
+        if(!hour) return 'Hora no asignada'
         let finalHour = hour.split(':')
         return `${finalHour[0]}:${finalHour[1]}`
       },
@@ -204,6 +209,11 @@
           console.error('export error');
         }
 
+      }
+    },
+    watch:{
+      "items.page": function(val) {
+        this.getAtenciones()
       }
     }
   }

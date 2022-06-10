@@ -1,6 +1,6 @@
 <template>
     <v-autocomplete full-width class="font-weight-light" :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
-      hide-no-data item-value="id" item-text="name" placeholder="Buscar socios..." outlined :rounded="rounded" background-color="white" v-model="result" 
+      hide-no-data item-value="name" item-text="name" placeholder="Buscar socios..." outlined :rounded="rounded" background-color="white" v-model="result" 
       @keyup.enter="result = search">
       <template v-slot:append-outer v-if="icon">
         <v-slide-x-reverse-transition mode="out-in">
@@ -33,11 +33,9 @@
     watch: {
       search(val) {
         // Items have already been requested
-        if (this.isLoading) {
-          return;
-        }
         this.isLoading = true;
         // Lazily load input items
+        console.log(val);
         const query = `?_where[_or][0][name_contains]=${val}&_where[_or][1][last_name_contains]=${val}`
         this.$axios
           .get(`/socios/${query}`)

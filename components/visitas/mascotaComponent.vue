@@ -19,7 +19,7 @@
       <v-card-text class="pa-4 rounded-lg">
         <v-card outlined class="rounded-xl">
           <v-data-table show-select single-select v-model="selectedAtencion" :headers="headers" hide-default-footer
-            :items="items">
+            :items="items.data">
             <template v-slot:item.fecha="{ item }">
               <v-btn outlined small @click="()=>{
                     openModalAtencion(createAtencion, 'VER VISITA', true);
@@ -40,12 +40,7 @@
         </v-card>
       </v-card-text>
       <v-card-actions class="d-flex justify-center" v-if="atencion.mascota">
-          <v-btn small fab class="rounded-lg mr-2" @click="$emit('prevPage',atencion.mascota)">
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn small fab class="rounded-lg" @click="$emit('nextPage',atencion.mascota)">
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
+          <v-pagination :total-visible="10" :length="Math.ceil(items.length/25)" v-model="page" @input="$emit('changePage',{page:$event,mascota:atencion.mascota})"></v-pagination>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="modalData.openModal" width="80%" height="auto" persistent>
@@ -67,7 +62,10 @@
   import moment from 'moment';
   export default {
     props: {
-      items: [],
+      items: {
+        data:[],
+        length:0
+      },
       value: {
         default: {
           files: [],
@@ -228,9 +226,11 @@
 
 
       formatDate(date) {
+        if(!date) return 'Fecha no asignada'
         return moment(date).format('DD/MM/YYYY')
       },
       formatHour(hour) {
+        if(!hour) return 'Hora no asignada'
         let finalHour = hour.split(':')
         return `${finalHour[0]}:${finalHour[1]}`
       },

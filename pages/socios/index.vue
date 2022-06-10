@@ -1,9 +1,8 @@
 <template>
   <v-container fluid>
-    <SociosListSociosComponent @prevPage="getSocios('prev')"
-        @nextPage="getSocios('next')" v-model="sociosList">
+    <SociosListSociosComponent @changePage="getSocios($event)" v-model="sociosList">
       <template v-slot:extraFields>
-        <SociosFindSociosComponent v-model="search.id"></SociosFindSociosComponent>
+        <SociosFindSociosComponent v-model="search.name_contains"></SociosFindSociosComponent>
       </template>
       <template v-slot:buttonTitle>
         <v-btn to="/socios/registro" class="font-weight-light rounded-lg white--text" color="gd-primary-to-right">
@@ -73,7 +72,10 @@
           client: {}
         },
         search: {},
-        sociosList: [],
+        sociosList: {
+          data: [],
+          length: 0
+        },
         pageItems: 0
       }
     },
@@ -81,31 +83,21 @@
       this.getSocios()
     },
     methods: {
-      getSocios(page = null) {
-        let sizePage = 25
-        this.sociosList = []
-        if (page == 'prev' && this.pageItems - sizePage >= 0) {
-          this.pageItems -= sizePage
-        } else if (page == 'next') {
-          this.pageItems += sizePage
-        }
-
-        if(this.search.id){
-          this.pageItems = 0
-        }
-
-        this.$axios.get('/socios', {
-            params: {
-              ...this.search,
-              _start: this.pageItems,
-              _limit: this.pageItems + sizePage
-            }
+      async getSocios(page = 1) {
+        this.search._start = (page - 1) * 25;
+        this.search._limit = page * 25;
+        this.sociosList.data = []
+        this.sociosList.length = 0
+        await this.$axios.get('/socios', {
+            params: this.search
           })
           .then(response => {
-            this.sociosList = response.data
+            this.sociosList.data = response.data
           })
-          .catch(error => {
-            console.log(error)
+
+        await this.$axios.get('/socios/count',{params: this.search})
+          .then(response => {
+            this.sociosList.length = response.data
           })
       },
       payServices() {
@@ -123,7 +115,7 @@
           this.getSocios()
         },
         deep: true
-      }
+      },
     }
   }
 

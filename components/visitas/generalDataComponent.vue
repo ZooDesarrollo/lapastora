@@ -96,8 +96,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="listSociosModal">
-      <SociosListSociosComponent v-model="sociosList" @prevPage="getSocios('prev')"
-        @nextPage="getSocios('next')">
+      <SociosListSociosComponent v-model="sociosList" @changePage="getSocios($event)">
         <template v-slot:button="{ item }">
           <v-btn outlined @click="($e)=>{
             $emit('input', {...value,socio:item});
@@ -107,7 +106,7 @@
           </v-btn>
         </template>
         <template v-slot:extraFields>
-          <SociosFindSociosComponent v-model="searchSocios.id"></SociosFindSociosComponent>
+          <SociosFindSociosComponent v-model="searchSocios.name_contains"></SociosFindSociosComponent>
         </template>
       </SociosListSociosComponent>
     </v-dialog>
@@ -136,7 +135,10 @@
         createSocioModal: false,
         listSociosModal: false,
         searchSocios: {},
-        sociosList: [],
+        sociosList: {
+          data:[],
+          length:0
+        },
         socio: {
           suc: 'CASA CENTRAL',
           socio: 'SI',
@@ -161,29 +163,23 @@
       this.getSocios()
     },
     methods: {
-      getSocios(page = null) {
-          let sizePage = 25
-          this.sociosList = []
-          if (page =='prev' && this.pageItems - sizePage >= 0) {
-            this.pageItems -= sizePage
-          } else if (page == 'next') {
-            this.pageItems +=sizePage
-          }
-        if(this.searchSocios.id){
-          this.pageItems = 0
-        }
-
-        this.$axios.get('/socios', {
-            params: {...this.searchSocios,_start:this.pageItems,_limit:this.pageItems+sizePage}
+      async getSocios(page = 1) {
+        this.searchSocios._start = (page - 1) * 25;
+        this.searchSocios._limit = page*25;
+        this.sociosList.data = []
+        await this.$axios.get('/socios', {
+            params: this.searchSocios
           })
           .then(response => {
-            console.log("aca")
-            this.sociosList = response.data
+            this.sociosList.data = response.data
+          })
+
+        await this.$axios.get('/socios/count')
+          .then(response => {
+            this.sociosList.length = response.data
             console.log(this.sociosList)
           })
-          .catch(error => {
-            console.log(error)
-          })
+
       },
       async createSocio() {
         if (!this.socio.user.username) {

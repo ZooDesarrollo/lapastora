@@ -11,7 +11,7 @@
       <slot name="extraFields"></slot>
     </v-card-title>
     <v-card-text>
-      <v-data-table :items="value" :headers="headers" :items-per-page="-1" hide-default-footer>
+      <v-data-table :items="value.data" :headers="headers" :items-per-page="-1" hide-default-footer>
         <template v-slot:item.payment_date="{ item }">
           {{formatDate(item.payment_date)}}
         </template>
@@ -20,14 +20,10 @@
         </template>
       </v-data-table>
     </v-card-text>
-    <v-card-actions class="d-flex justify-center">
-      <v-btn small fab class="rounded-lg mr-2" @click="$emit('prevPage')">
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-      <v-btn small fab class="rounded-lg" @click="$emit('nextPage')">
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </v-card-actions>
+      <v-card-actions class="d-flex justify-center">
+        <v-pagination :total-visible="10" :length="Math.ceil(value.length/25)" v-model="page" 
+        @input="$emit('changePage',page)"></v-pagination>
+      </v-card-actions>
 
   </v-card>
 </template>
@@ -37,8 +33,10 @@
   export default {
     props: {
       value: {
-        type: Array,
-        default: () => []
+        default: {
+          data: [],
+          length: 0
+        }
       }
     },
     data() {
@@ -60,15 +58,14 @@
             align: 'right'
           }
         ],
-        sociosList: [],
-        search: ""
+        search: "",
+        page:1
       }
     },
     methods: {
       formatDate(date) {
         if (date) {
           return moment(date).format('DD/MM/YYYY')
-          llllllllllll3
         } else {
           return 'Pago aun no realizado'
         }

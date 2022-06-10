@@ -9,8 +9,7 @@
       </v-col>
       <v-col class="col-12">
         <visitasMascotaComponent 
-        @prevPage="getAtencionMascota($event,'prev')"
-        @nextPage="getAtencionMascota($event,'next')"
+        @changePage="getAtencionMascota($event)"
         :items="consultaItems" 
         @getAtencionMascota="getAtencionMascota($event)" 
         v-model="atencion"></visitasMascotaComponent>
@@ -46,7 +45,11 @@
           proximas: []
         },
         pageItems:0,
-        consultaItems: [],
+        consultaItems: {
+          data:[],
+          length:0,
+        },
+        search:{}
       }
     },
     created() {},
@@ -55,22 +58,27 @@
 
 
       //add to agenda 
-      getAtencionMascota(mascota, page) {
-        if (page =='prev' && this.pageItems - 10 >= 0) {
-          this.pageItems -= 10
-        } else if (page == 'next') {
-          this.pageItems +=10
-        }
-        this.$axios.get(`/atencion?mascota=${mascota.id}`,{
-          params:{
-            mascota:mascota.id,
-            _start:this.pageItems,
-            _limit:this.pageItems+10
-          }
+      async getAtencionMascota(mascota, page = 1) {
+
+        this.search._start = 25*(page-1)
+        this.search._limit = 25*(page)
+        this.search.mascota = mascota.id
+        await this.$axios.get(`/atencion`,{
+          params:this.search
         })
           .then(response => {
-            this.consultaItems = response.data
+            this.consultaItems.data = response.data
           })
+        await this.$axios.get('/atencion/count', {
+            params: {mascota: mascota.id}
+          })
+          .then(response => {
+            this.consultaItems.length = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
       },
 
     },

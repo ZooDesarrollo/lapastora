@@ -16,13 +16,10 @@
           </toolbarComponent>
           <v-card-title>
             <v-row>
-              <v-col :class="{'col-md-7':search.type=='evento','col-md-3':search.type=='consulta'}">
+              <v-col class="col-md-7">
                 <v-select dense class="font-weight-light" v-model="search.type" solo label="Tipo"
                   :items="[{text:'Todos',value:null},{text:'Consulta',value:'consulta'},{text:'Evento',value:'evento'}]">
                 </v-select>
-              </v-col>
-              <v-col class="col-md-4" v-if="search.type =='consulta'">
-                <sociosFindSociosComponent hideDetails v-model="search.consulta.socio"></sociosFindSociosComponent>
               </v-col>
               <v-col class="col-md-3">
                 <v-text-field type="date" hide-details solo dense v-model="search.fecha" label="Buscar por fecha"
@@ -102,7 +99,6 @@
               <v-card outlined>
                 <v-card-title class="font-weight-light">Detalles de la consulta</v-card-title>
                 <v-card-text>
-                  <sociosFindSociosComponent v-model="agenda.consulta.socio"></sociosFindSociosComponent>
                   <v-select solo hide-details :items="['Higiene','Consulta','Medicacion','Otro']" :rules="rules.required"
                     v-model="agenda.consulta.tipo_consulta" label="Tipo de consulta" dense class="rounded-lg">
                   </v-select>
