@@ -11,7 +11,7 @@
             <v-col class="col-12 col-md-7">
               <v-row>
                 <v-col class="col-12 col-md-6">
-                  <v-text-field label="CODIGO" type="number" v-model="product.codigo" class="rounded-lg" solo dense>
+                  <v-text-field label="CODIGO" :rules="rules.codigo" type="number" v-model="product.codigo" class="rounded-lg" solo dense>
                   </v-text-field>
                   <v-card color="gd-primary-to-right" class="rounded-lg elevation-0" height="400">
                     <v-card-text>
@@ -25,14 +25,14 @@
                   <v-text-field label="NOMBRE" v-model="product.nombre" class="rounded-lg" solo dense></v-text-field>
                   <v-text-field label="COSTO/UNIDAD" type="number" v-model="product.precio_unidad" class="rounded-lg"
                     solo dense></v-text-field>
-                  <v-text-field label="CANTIDAD" type="number" v-model="product.cantidad" class="rounded-lg" solo dense>
+                  <v-text-field label="CANTIDAD" :rules="rules.minNumber" type="number" v-model="product.cantidad" class="rounded-lg" solo dense>
                   </v-text-field>
                   <v-text-field label="PRECIO FINAL" type="number" v-model="product.precio_final" class="rounded-lg"
                     solo dense></v-text-field>
                   <v-text-field label="FECHA DE COMPRA" type="date" v-model="product.fecha_compra" class="rounded-lg"
                     solo dense></v-text-field>
-                  <v-text-field label="VENCIMIENTO" type="date" v-model="product.vencimiento" class="rounded-lg"
-                    solo dense></v-text-field>
+                  <v-text-field label="VENCIMIENTO" type="date" v-model="product.vencimiento" class="rounded-lg" solo
+                    dense></v-text-field>
 
                 </v-col>
               </v-row>
@@ -64,6 +64,19 @@
         </p>
       </template>
     </modal-success>
+    <modal-success color="red" :action="()=>{
+      this.errorDialog = false
+      }" v-model="errorDialog">
+      <template v-slot:icon>
+        mdi-close
+      </template>
+      <template v-slot:title>
+        <p class="text-h6 mb-0">
+          <strong>El codigo del producto ya existe!</strong>
+        </p>
+      </template>
+    </modal-success>
+
   </v-container>
 </template>
 
@@ -75,9 +88,27 @@
     },
     data() {
       return {
-        product: {},
+        product: {
+          cantidad:1
+        },
         dialog: false,
-        dialogDistribuidores: false
+        errorDialog: false,
+        dialogDistribuidores: false,
+        rules: {
+          codigo: [
+            v => !!v || 'El codigo es requerido',
+            v => (v && v.length <= 10) || 'El codigo debe tener menos de 10 caracteres'
+          ],
+          nombre: [
+            v => !!v || 'El nombre es requerido',
+            v => (v && v.length <= 50) || 'El nombre debe tener menos de 50 caracteres'
+          ],
+          minNumber: [
+            v => !!v || 'la cantidad es requerida',
+            v => (v && v < 1) || 'la cantidad debe ser mayor a 0'
+          ],
+
+        }
       }
     },
     mounted() {
@@ -100,12 +131,18 @@
       async createProduct() {
         if (!this.$refs.form.validate()) return
         let data = new FormData();
-        data.append('files.foto', this.product.foto);
+
+        if (this.product.foto != undefined) {
+          data.append('files.foto', this.product.foto);
+        }
+
         data.append('data', JSON.stringify(this.product));
         this.$axios.post('/productos', data)
           .then(() => {
-            this.dialog = true
             this.product = {}
+          }).catch(() => {
+            this.errorDialog = true
+
           })
       },
       initReader() {

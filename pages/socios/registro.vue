@@ -38,7 +38,10 @@
     },
     methods: {
       createSocio() {
-        if(!this.socio.user.email) {
+        if (!this.socio.user.username) {
+          this.socio.user.username = Math.floor(Math.random() * 900000000) + 100000000;
+        }
+        if (!this.socio.user.email) {
           this.socio.user.email = `${this.socio.user.username}@gmail.com`
         }
         if(!this.socio.user.password) {

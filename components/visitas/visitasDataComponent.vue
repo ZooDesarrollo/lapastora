@@ -26,10 +26,10 @@
             <createReferenciasComponent v-model="atencion.referencias"></createReferenciasComponent>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" v-model="atencion.anamnesis" label="Anamnesis"></v-text-field>
+            <v-textarea outlined :readonly="readonly" v-model="atencion.anamnesis" label="Anamnesis"></v-textarea>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" v-model="atencion.EOG" label="EOG"></v-text-field>
+            <v-textarea outlined :readonly="readonly" v-model="atencion.EOG" label="EOG"></v-textarea>
           </v-col>
           <v-col class="col-12">
             <v-textarea outlined :readonly="readonly" v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>

@@ -1,5 +1,5 @@
 <template>
-    <v-autocomplete full-width class="font-weight-light" :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
+    <v-autocomplete full-width class="font-weight-light" no-filter :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
       hide-no-data item-value="name" item-text="name" placeholder="Buscar socios..." outlined :rounded="rounded" background-color="white" v-model="result" 
       @keyup.enter="result = search">
       <template v-slot:append-outer v-if="icon">
@@ -35,8 +35,7 @@
         // Items have already been requested
         this.isLoading = true;
         // Lazily load input items
-        console.log(val);
-        const query = `?_where[_or][0][name_contains]=${val}&_where[_or][1][last_name_contains]=${val}`
+        const query = `?_where[_or][0][name_contains]=${val}&_where[_or][1][last_name_contains]=${val}&_where[_or][2][address_contains]=${val}&_where[_or][3][user.username_contains]=${val}`
         this.$axios
           .get(`/socios/${query}`)
           .then(data => {

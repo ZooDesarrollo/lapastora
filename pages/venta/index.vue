@@ -319,8 +319,9 @@
             cantidad: 1,
             descuento: 0,
             tipo: tipo,
-            codigo: 'P' + item.id,
-            productos: item.productos
+            codigo: 'C' + item.id,
+            productos: item.productos,
+            item:item
           }
         } else {
           this.producto = {
@@ -329,7 +330,7 @@
             cantidad: 1,
             descuento: 0,
             tipo: tipo,
-            codigo: 'C' + item.id
+            codigo: 'P' + item.id
 
           }
         }
@@ -350,7 +351,7 @@
               cantidad: 1,
               descuento: 0,
               tipo: 'producto',
-              codigo: 'C' + item.id
+              codigo: 'C' + item.id,
             })
           })
         }
@@ -361,6 +362,15 @@
       },
       createVenta() {
         if (!this.$refs.form.validate() && this.venta.productos.length == 0) return
+        if(this.venta.tipo =='Efectivo') {
+          this.venta.productos.filter(async(pr)=>{
+            if(pr.tipo == 'consulta'){
+              let cons = pr.item
+              cons.estado = 'Finalizada'
+              await this.$axios.put(`/atencion/${pr.item.id}`,cons)
+            }
+          })
+        }
         this.$axios.post('/ventas', this.venta)
           .then(() => {
             this.showVentasList = false

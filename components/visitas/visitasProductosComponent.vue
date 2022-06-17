@@ -1,16 +1,27 @@
 <template>
   <div>
     <v-card outlined>
-      <v-card-title>
+      <v-card-title class="font-weight-light">
+        Vacunas
+        <v-spacer></v-spacer>
+      </v-card-title>
+      <v-card-text>
+        <v-data-table :headers="vacunasHeaders" :items="vacunasList" hide-default-footer>
+          <template v-slot:item.actions="{ item }">
+              <v-btn block  outlined @click="addProduct(item)">Agregar</v-btn>
+          </template>
+        </v-data-table>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-title class="font-weight-light">
+        Productos de la consulta
+        <v-spacer></v-spacer>
         <v-btn outlined color="primary" @click="modalProductos = true">
           AGREGAR PRODUCTO&nbsp;<v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-card-title>
       <v-card-text>
         <v-data-table :headers="headers" :items="value" hide-default-footer>
-          <template v-slot:item.producto.nombre="{ item }">
-            <v-text-field dense outlined hide-details v-model="item.producto.nombre"></v-text-field>
-          </template>
           <template v-slot:item.descripcion="{ item }">
             <v-text-field dense outlined hide-details v-model="item.descripcion"></v-text-field>
           </template>
@@ -35,6 +46,7 @@
 
         </v-data-table>
       </v-card-text>
+
     </v-card>
     <v-dialog v-model="modalProductos" width="60%">
       <v-card>
@@ -42,7 +54,7 @@
           Productos
           <v-spacer></v-spacer>
           <v-btn icon @click="modalProductos = false">
-              <v-icon>mdi-close</v-icon>
+            <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text>
@@ -84,11 +96,11 @@
         }, , {
           value: 'total',
           text: 'Total'
-        },{
+        }, {
           value: 'delete',
           text: 'Eliminar'
         }],
-        headersProductos:[{
+        headersProductos: [{
           value: 'nombre',
           text: 'Nombre'
         }, {
@@ -97,34 +109,59 @@
         }, {
           value: 'add',
           text: 'Agregar',
-          align:'right'
+          align: 'right'
         }],
         listProductos: [],
+        vacunasHeaders: [{
+          value: 'nombre',
+          text: 'Producto'
+        }, {
+          value: 'precio_final',
+          text: 'Precio'
+        }, {
+          value: 'cantidad',
+          text: 'Cantidad'
+        }, {
+          value: 'actions',
+          text: 'Agregar'
+        }],
+        vacunasList: [],
         modalProductos: false
       }
     },
-    created(){
-        this.getProductos()
+    created() {
+      this.getProductos()
     },
-    methods:{
-        getProductos(){
-          this.$axios.get('/productos').then(response => {
-            this.listProductos = response.data;
-          });
-        },
-        addProduct(product){
-            console.log(product)
-            this.$set(this.productos,this.productos.length, {producto:product});
-            this.modalProductos = false;
-        },
-        deleteProduct(item) {
-          this.productos = this.productos.filter(producto => producto.id != item.id)
+    methods: {
+      async getProductos() {
+        var vm = this
+        const getProducts = async function (params = {}) {
+          return (await vm.$axios.get('/productos', {params : params})).data
         }
+        this.listProductos = await getProducts()
+        this.vacunasList = await getProducts({
+          codigo_in: ['0002','0001'],
+        })
+      },
+      addProduct(product) {
+        console.log(product)
+        this.$set(this.productos, this.productos.length, {
+          producto: product,
+          precio: product.precio_final,
+          cant: 1,
+          total: product.precio,
+          id: product.id
+        });
+        this.modalProductos = false;
+      },
+      deleteProduct(item) {
+        this.productos = this.productos.filter(producto => producto.id != item.id)
+      }
     },
     watch: {
       productos(val) {
-        if(val!=undefined)
-            this.$emit('input', val)
+        if (val != undefined)
+          this.$emit('input', val)
       }
     },
   }

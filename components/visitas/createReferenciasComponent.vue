@@ -67,6 +67,10 @@
         this.$axios.get('/referencias')
           .then((data) => {
             this.referenciasList = data.data
+            this.referenciasList.unshift({
+              id: null,
+              nombre: "Seleccione una referencia"
+            })
           })
       }
     },

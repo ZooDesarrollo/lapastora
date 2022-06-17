@@ -22,7 +22,7 @@
             </v-input>
           </v-col>
           <v-col class="col-12">
-            <v-btn @click="getAtenciones()" color="gd-primary-to-right" height="40" depressed
+            <v-btn @click="items.page = 1;getAtenciones()" color="gd-primary-to-right" height="40" depressed
               class="white--text font-weight-light" block>
               Buscar&nbsp;<v-icon>mdi-magnify</v-icon>
             </v-btn>
@@ -34,7 +34,9 @@
       <v-card-text>
         <v-data-table :headers="headers" hide-default-footer :items="items.data">
           <template v-slot:item.fecha="{ item }">
-            {{formatDate(item.fecha)}}
+              <v-btn outlined small @click="showModalAtencion(item)">
+                <v-icon>mdi-magnify</v-icon> &nbsp;{{formatDate(item.fecha)}}
+              </v-btn>
           </template>
           <template v-slot:item.socio.name="{ item }">
             {{item.socio.name}} {{item.socio.last_name}}
@@ -49,7 +51,7 @@
         <v-pagination :total-visible="10" :length="Math.ceil(items.length/25)" v-model="items.page"></v-pagination>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="openAtencionModal" width="80%" height="auto" persistent>
+    <v-dialog v-model="openAtencionModal" width="80%"  height="auto">
       <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
         <v-toolbar-title>VER VISITA</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -166,7 +168,8 @@
         this.openAtencionModal = true
       },
       exportData() {
-        let data = this.items.map((item) => {
+        console.log(this.items)
+        let data = this.items.data.map((item) => {
           return {
             Fecha: this.formatDate(item.fecha),
             Hora: this.formatHour(item.hora),
@@ -190,7 +193,7 @@
 
       },
       exportDataProximas() {
-        let data = this.itemsProximas.map((item) => {
+        let data = this.items.data.map((item) => {
           return {
             Fecha: this.formatDate(item.fecha),
             Hora: this.formatHour(item.hora),

@@ -43,7 +43,7 @@
           <v-pagination :total-visible="10" :length="Math.ceil(items.length/25)" v-model="page" @input="$emit('changePage',{page:$event,mascota:atencion.mascota})"></v-pagination>
       </v-card-actions>
     </v-card>
-    <v-dialog v-model="modalData.openModal" width="80%" height="auto" persistent>
+    <v-dialog v-model="modalData.openModal" width="80%" height="auto">
       <v-toolbar color="primary" class="elevation-0 white--text font-weight-thin">
         <v-toolbar-title>{{modalData.title}}</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -265,6 +265,11 @@
         if (val.length > 0) {
           this.atencion = JSON.parse(JSON.stringify(val[0]))
         } else {
+          this.formatAtencion()
+        }
+      },
+      "modalData.openModal": function(val) {
+        if (!val) {
           this.formatAtencion()
         }
       },

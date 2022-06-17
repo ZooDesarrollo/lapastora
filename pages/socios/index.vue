@@ -101,7 +101,7 @@
           })
       },
       payServices() {
-        this.dataPayment.client.payment_date = moment().add(this.dataPayment.months, 'months').format('YYYY-MM-DD')
+        this.dataPayment.client.payment_date = moment(this.dataPayment.client.payment_date ?? new Date()).add(this.dataPayment.months, 'months').format('YYYY-MM-DD')
         this.$axios.put(`/socios/${this.dataPayment.client.id}`, this.dataPayment.client).then(response => {
           this.openModalPaymentServices = false;
           this.openAlertPayment = false
