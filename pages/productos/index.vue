@@ -105,7 +105,6 @@
           ],
           minNumber: [
             v => !!v || 'la cantidad es requerida',
-            v => (v && v < 1) || 'la cantidad debe ser mayor a 0'
           ],
 
         }
