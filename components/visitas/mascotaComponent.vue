@@ -2,7 +2,7 @@
   <div>
     <v-card class="rounded-xl">
       <v-toolbar color="gd-primary-to-right" elevation="0">
-        <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota</v-toolbar-title>
+        <v-toolbar-title class="white--text font-weight-light">Atenciones de la mascota {{value.mascota.nombre}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn class="mr-2 font-weight-light" :disabled="!value.socio.id || !value.mascota.id || value.id" color="white"
           @click="openModalAtencion(createAtencion, 'NUEVA VISITA')">

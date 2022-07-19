@@ -47,7 +47,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'https://api.descuentosya.uy/',
+    baseURL: 'https://api2.descuentosya.uy/',
     //baseURL: 'http://localhost:1337/'
   },
   auth: {
@@ -86,7 +86,7 @@ export default {
       dark: false,
       themes: {
         light: {
-          primary: "#03989e",
+          primary: "#607bb6",
           accent: colors.grey.darken3,
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
