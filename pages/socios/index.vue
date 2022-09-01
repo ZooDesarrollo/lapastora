@@ -2,21 +2,7 @@
   <v-container fluid>
     <SociosListSociosComponent @changePage="getSocios($event)" v-model="sociosList">
       <template v-slot:extraFields>
-        <v-row>
-          <v-col class="col-md-11 col-sm-10 col-12">
-            <SociosFindSociosComponent v-model="search.name_contains"></SociosFindSociosComponent>
-
-          </v-col>
-          <v-col class="col-md-1 col-sm-2 col-12">
-            <v-switch
-            class="mt-0"
-            hide-details
-      v-model="search.old_client"
-      default="false"
-      label="C. antiguo"
-    ></v-switch>
-          </v-col>
-        </v-row>
+        <SociosFindSociosComponent v-model="search.name_contains"></SociosFindSociosComponent>
       </template>
       <template v-slot:buttonTitle>
         <v-btn to="/socios/registro" class="font-weight-light rounded-lg white--text" color="gd-primary-to-right">
