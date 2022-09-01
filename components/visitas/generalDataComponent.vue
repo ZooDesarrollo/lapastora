@@ -11,8 +11,6 @@
               <v-col class="col-md-12 col-12">
                 <v-text-field label="NOMBRE" readonly outlined dense filled v-model="value.socio.name"
                   class="rounded-lg white--text"> </v-text-field>
-                <v-text-field label="APELLIDO" readonly outlined dense filled v-model="value.socio.last_name"
-                  class="rounded-lg white--text"> </v-text-field>
                 <v-text-field label="NRO CLIENTE" readonly outlined filled dense v-model="value.socio.id"
                   class="rounded-lg white--text"> </v-text-field>
                 <v-text-field label="DIRECCION" readonly outlined dense filled v-model="value.socio.address"
@@ -34,14 +32,20 @@
                       <v-icon>mdi-plus</v-icon> cliente
                     </v-btn>
                   </v-col>
+                  <v-col class="col-12">
+                    <v-btn block class="white--text" color="gd-primary-to-right font-weight-light rounded-lg"
+                      :disabled="!value.socio.id" :to="`/socios/editar/${value.socio.id}`">
+                      <v-icon>mdi-pencil</v-icon> Editar cliente
+                    </v-btn>
+                  </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </v-col>
           <v-col class="col-md-4 col-12">
             <v-card outlined class="rounded-xl">
-              <v-data-table show-select single-select v-model="selectedMascota" :items-per-page="6" :page="pagePets"
-                :items="value.socio.mascotas" hide-default-footer :headers="headersMascotas">
+              <v-data-table show-select single-select @input="getAtentionsPet($event)" :items-per-page="6"
+                :page="pagePets" :items="value.socio.mascotas" hide-default-footer :headers="headersMascotas">
                 <template v-slot:item.nombre="{ item }">
                   <v-btn outlined block small :to="`/mascotas/editar/${item.id}`">
                     <div class="d-flex justify-space-between align-center" style="width:100%">
@@ -49,9 +53,12 @@
                     </div>
                   </v-btn>
                 </template>
+                <template v-slot:item.state="{ item }">
+                  {{setState(item)}}
+                </template>
               </v-data-table>
               <v-card-actions class="d-flex justify-center">
-                <v-pagination v-model="pagePets" :length="Math.round(value.socio.mascotas.length/6)"></v-pagination>
+                <v-pagination v-model="pagePets" :length="cantPets()"></v-pagination>
               </v-card-actions>
               <v-card-text>
                 <v-textarea hide-details class="mt-3" label="Observaciones" outlined
@@ -72,7 +79,7 @@
               class="rounded-lg white--text"> </v-text-field>
             <v-select :items="[{
                       text:'Macho',
-                      value: 'Macho'
+                      value: 'M'
                     },{
                       text:'Hembra',
                       value: 'H'
@@ -92,7 +99,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-dialog v-model="createSocioModal" width="80%" height="auto">
+    <v-dialog v-model="createSocioModal" width="80%" height="auto" persistent>
       <v-card>
         <v-toolbar class="elevation-0" color="primary">
           <v-toolbar-title class="white--text font-weight-thin">Nuevo cliente</v-toolbar-title>
@@ -102,7 +109,8 @@
           </v-btn>
         </v-toolbar>
         <v-card-text class="pa-4 overflow-card">
-          <sociosFormComponent :handler="createSocio" v-model="socio"></sociosFormComponent>
+          <sociosFormComponent :handler="createSocio" :openModal="createSocioModal" v-model="socio">
+          </sociosFormComponent>
         </v-card-text>
         <v-divider></v-divider>
       </v-card>
@@ -110,10 +118,7 @@
     <v-dialog v-model="listSociosModal">
       <SociosListSociosComponent v-model="sociosList" @changePage="getSocios($event)">
         <template v-slot:button="{ item }">
-          <v-btn outlined @click="($e)=>{
-            $emit('input', {...value,socio:item});
-            listSociosModal = false;
-        }" color="primary">
+          <v-btn outlined @click="setSocio(item)" color="primary">
             AGREGAR
           </v-btn>
         </template>
@@ -129,29 +134,12 @@
 <script>
   import moment from 'moment';
   export default {
-    props: {
-      value: {
-        default: {
-          files: [],
-          socio: {
-            mascotas: []
-          },
-          mascota: {},
-          productos: [],
-          proximas: []
-        }
-      }
-    },
     data() {
       return {
         pagePets: 1,
         createSocioModal: false,
         listSociosModal: false,
         searchSocios: {},
-        sociosList: {
-          data: [],
-          length: 0
-        },
         socio: {
           suc: 'CASA CENTRAL',
           socio: 'SI',
@@ -164,10 +152,12 @@
           text: 'ID Paciente',
           value: 'id',
         }, {
+          text: '',
+          value: 'state'
+        }, {
           text: "Paciente",
           value: "nombre"
         }],
-        selectedMascota: [],
         pageItems: 0,
 
       }
@@ -176,23 +166,32 @@
       this.getSocios()
     },
     methods: {
+      getAtentionsPet(petSelected) {
+        if (petSelected.length > 0) {
+          let search = {
+            page: 1,
+            mascota: petSelected[0].id
+          }
+          this.$store.dispatch('atentions/setMascota', petSelected[0])
+          this.$store.dispatch('atentions/findAll', search)
+        } else {
+          this.$store.dispatch('atentions/setMascota', {})
+          this.$store.dispatch('atentions/cleanAll')
+        }
+      },
       async getSocios(page = 1) {
-        this.searchSocios._start = (page - 1) * 25;
-        this.searchSocios._limit = page * 25;
-        this.sociosList.data = []
-        await this.$axios.get('/socios', {
-            params: this.searchSocios
-          })
-          .then(response => {
-            this.sociosList.data = response.data
-          })
+        this.$store.dispatch('socios/findAll', {
+          page: page,
+          name: this.searchSocios.name_contains
+        })
 
-        await this.$axios.get('/socios/count')
-          .then(response => {
-            this.sociosList.length = response.data
-            console.log(this.sociosList)
-          })
-
+      },
+      cantPets() {
+        if (this.value ?.socio ?.mascotas ?.length > 0) {
+          return Math.ceil(this.value.socio.mascotas.length / 6)
+        } else {
+          return 0
+        }
       },
       async createSocio() {
         if (!this.socio.user.username) {
@@ -222,9 +221,32 @@
           console.log(error);
         });
       },
+      setSocio(socio) {
+        this.$store.dispatch('atentions/setSocio', socio)
+        this.listSociosModal = false
+      },
+      sociosMascotas() {
+        if (this.value.socio.mascotas != undefined) {
+          return this.value.socio.mascotas
+        }
+        return []
+      },
+      setState(mascota) {
+        let ActualDate = moment()
+        if (mascota.deceso != "1000-01-01") {
+          if (ActualDate.isAfter(mascota.deceso)) {
+            return '#'
+          } else {}
+        }
+        if (mascota.socio == "S") {
+          return 'SOCIO'
+        } else {
+          return 'NO SOCIO'
+        }
+      },
       setSocioName(mascota) {
         if (!mascota.socio) return
-        return mascota.socio + ' es socio'
+        return (mascota.socio=='S')?  'Si': 'No' + ' es socio'
       },
       checkDate(date) {
         if (date == "1000-01-01") return "-"
@@ -240,28 +262,16 @@
           return monthsDate + ' meses'
         }
       },
-
+    },
+    computed: {
+      sociosList() {
+        return this.$store.getters['socios/getList']
+      },
+      value() {
+        return this.$store.getters['atentions/get']
+      }
     },
     watch: {
-      selectedMascota(val) {
-        if (val.length == 0) {
-          this.$emit('input', {
-            ...this.value,
-            mascota: {}
-          })
-          this.consultaItems = []
-        } else {
-          let edad = moment().diff(this.value.mascota.fecha_nac, 'years')
-          this.$emit('input', {
-            ...this.value,
-            mascota: val[0],
-            edad: edad
-          })
-          this.$emit('mascota', val)
-          this.$emit('getAtencionMascota', val[0])
-        }
-      },
-
       searchSocios: {
         handler() {
           this.getSocios()

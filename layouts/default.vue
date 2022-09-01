@@ -16,15 +16,36 @@
 
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-btn text color="primary" height="50" width="50" class="btn-navigation"
-              active-class="btn-navigation-active" to="/atencion">
-              <v-icon>mdi-doctor</v-icon><br>
-              <span>ATENCION</span>
-            </v-btn>
-          </v-list-item-content>
-        </v-list-item>
+
+        <v-list-group no-action append-icon="">
+            <template v-slot:activator>
+              <v-list-item-content>
+                    <v-btn text color="primary" height="50" width="50" class="btn-navigation"
+                  active-class="btn-navigation-active">
+                  <v-icon>mdi-doctor</v-icon><br>
+                  <span>ATENCIONES</span>
+                </v-btn>
+              </v-list-item-content>
+            </template>
+            <v-list-item class="pl-12" to="/atencion">
+              <v-list-item-content>
+                <v-btn text color="primary" height="50" width="50" to="/atencion" class="btn-navigation"
+                  active-class="btn-navigation-active"  exact>
+                  <v-icon>mdi-doctor</v-icon>
+                  <span>Nueva atencion</span>
+                </v-btn>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item class="pl-12" link to="/atencion/antiguo" >
+              <v-list-item-content>
+                <v-btn text color="primary" height="50" width="50" class="btn-navigation"
+                  active-class="btn-navigation-active" to="/atencion/antiguo"  exact>
+                  <v-icon>mdi-format-list-bulleted</v-icon>
+                  <span>Cons. antiguas</span>
+                </v-btn>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
         <v-list-item>
           <v-list-item-content>
             <v-btn text color="primary" height="50" width="50" class="btn-navigation"
@@ -39,7 +60,7 @@
             <v-btn text color="primary" height="50" width="50" class="btn-navigation"
               active-class="btn-navigation-active" to="/socios">
               <v-icon>mdi-account-plus</v-icon><br>
-              <span>SOCIOS</span>
+              <span>CLIENTES</span>
             </v-btn>
           </v-list-item-content>
         </v-list-item>
@@ -55,7 +76,7 @@
 
         <v-list-item>
           <v-list-item-content>
-            <v-btn text color="primary" height="50" width="50" class="btn-navigation"
+            <v-btn text color="primary" height="50" width="50"  class="btn-navigation"
               active-class="btn-navigation-active" to="/mensajes">
               <v-icon>mdi-comment</v-icon><br>
               <span>MENSAJES</span>
@@ -125,10 +146,17 @@
     border: 1px solid #80808024;
     border-radius: 15px !important;
     padding: 0 !important;
-
+    .v-btn__content {
+      width:100%;
+      justify-content: start;
+      height: 100%;
+      align-items: center;
+      margin-left:40px;
+    }
     span {
       text-transform: capitalize;
       font-weight: 300;
+      margin-left:10px;
     }
   }
 
@@ -137,7 +165,7 @@
       color: white;
     }
 
-    background:linear-gradient(#607bb6, #2d4f99);
+    background:linear-gradient(90deg, #03989e, #037176);
     border-color:transparent;
   }
 

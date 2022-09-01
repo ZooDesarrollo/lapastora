@@ -9,7 +9,7 @@
       </v-col>
       <v-col class="col-12">
         <visitasMascotaComponent 
-        @changePage="getAtencionMascota($event)"
+        @changePage="getAtencionMascota($event.mascota,$event.page)"
         :items="consultaItems" 
         @getAtencionMascota="getAtencionMascota($event)" 
         v-model="atencion"></visitasMascotaComponent>
@@ -45,45 +45,33 @@
           proximas: []
         },
         pageItems:0,
-        consultaItems: {
-          data:[],
-          length:0,
-        },
         search:{}
       }
     },
-    created() {},
-    methods: {
-
-
-
-      //add to agenda 
-      async getAtencionMascota(mascota, page = 1) {
-
-        this.search._start = 25*(page-1)
-        this.search._limit = 25*(page)
-        this.search.mascota = mascota.id
-        await this.$axios.get(`/atencion`,{
-          params:this.search
-        })
-          .then(response => {
-            this.consultaItems.data = response.data
-          })
-        await this.$axios.get('/atencion/count', {
-            params: {mascota: mascota.id}
-          })
-          .then(response => {
-            this.consultaItems.length = response.data
-          })
-          .catch(error => {
-            console.log(error)
-          })
-
-      },
-
+    created() {
+      this.$store.dispatch('atentions/cleanAll')
+      this.$store.dispatch('atentions/cleanSingle')
+      this.$store.dispatch('atentions/cleanSelected')
+      this.checkHiperLinks()
     },
-    watch: {
-    }
+    methods:{
+      checkHiperLinks(){
+        if(this.$route.query.socio){
+          this.$axios.get(`/socios/${this.$route.query.socio}`).then(data=>{
+            this.$store.dispatch('atentions/setSocio', data.data)
+            if(this.$route.query.mascota) {
+              let hiperLinkPet = data.data.mascotas.find((p)=>p.id == this.$route.query.mascota)
+              this.$store.dispatch('atentions/setMascota', hiperLinkPet)
+            }
+          })
+        }
+      }
+    },
+    computed: {
+      consultaItems() {
+        return this.$store.getters['atentions/get']
+      }
+    },
   }
 
 </script>

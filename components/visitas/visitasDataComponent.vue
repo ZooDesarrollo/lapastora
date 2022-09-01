@@ -15,7 +15,7 @@
             <v-text-field outlined :readonly="readonly" type="time" v-model="atencion.hora" label="Hora"></v-text-field>
           </v-col>
           <v-col class="col-12">
-            <v-text-field outlined :readonly="readonly" v-model="atencion.mascota.peso" type="number" label="Peso">
+            <v-text-field outlined :readonly="readonly" v-model="atencion.peso" type="number" label="Peso">
             </v-text-field>
           </v-col>
           <v-col class="col-12">
@@ -35,15 +35,11 @@
             <v-textarea outlined :readonly="readonly" v-model="atencion.tratamiento" label="Tratamiento"></v-textarea>
           </v-col>
           <v-col class="col-12">
-            <v-textarea outlined :readonly="readonly" v-model="atencion.referencias_caja" label="Referencias de la caja"></v-textarea>
-          </v-col>
-
-          <v-col class="col-12">
-            <v-select outlined :readonly="readonly" v-model="proximaConsulta" :items="['Si','No']"
+            <v-select outlined :readonly="readonly" v-model="atencion.proxima_consulta" :items="['Si','No']"
               label="Tendra proxima consulta?"></v-select>
           </v-col>
           <v-col class="col-12">
-            <v-card class="rounded-lg" outlined v-show="proximaConsulta == 'Si'">
+            <v-card class="rounded-lg" outlined v-show="atencion.proxima_consulta == 'Si'">
               <v-card-title class="font-weight-light">Proxima consulta</v-card-title>
               <v-card-text>
                 <v-row>
@@ -58,7 +54,7 @@
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12">
-                    <v-textarea outlined :readonly="readonly" v-model="atencion.proxima_consulta"
+                    <v-textarea outlined :readonly="readonly" v-model="atencion.motivo_proxima_consulta"
                       label="Motivo de proxima consulta">
                     </v-textarea>
                   </v-col>
@@ -69,6 +65,11 @@
               </v-card-text>
             </v-card>
           </v-col>
+          <v-col class="col-12">
+            <v-textarea outlined :readonly="readonly" v-model="atencion.referencias_caja"
+              label="Referencias de la caja"></v-textarea>
+          </v-col>
+
           <v-col class="col-12">
             <v-checkbox outlined :readonly="readonly" v-model="atencion.con_costo" label="Consulta con costo">
             </v-checkbox>
@@ -83,10 +84,11 @@
           </v-col>
 
           <v-col class="col-12">
-            <visitas-productos-component v-model="atencion.productos"></visitas-productos-component>
+            <visitas-productos-component  v-if="!readonly" :readonly="readonly" v-model="atencion.productos">
+            </visitas-productos-component>
           </v-col>
           <v-col class="col-12">
-            <visitasProximaComponent v-model="atencion.proximas"></visitasProximaComponent>
+            <visitasProximaComponent :readonly="readonly" v-model="atencion.proximas"></visitasProximaComponent>
           </v-col>
 
         </v-row>
@@ -101,6 +103,7 @@
 </template>
 
 <script>
+  import _ from 'lodash';
   import visitasProductosComponent from './visitasProductosComponent.vue';
   import createReferenciasComponent from './createReferenciasComponent.vue';
   import moment from 'moment';
@@ -111,7 +114,9 @@
     },
 
     props: {
-      value: Object,
+      openModal: {
+        default: false
+      },
       handler: Function,
       readonly: {
         default: false,
@@ -120,26 +125,34 @@
     },
     data() {
       return {
-        atencion: this.value,
+        atencion: {
+          files: [],
+          socio: {
+            mascotas: []
+          },
+          mascota: {},
+          productos: [],
+          proximas: []
+        },
         proximaConsulta: 'No',
         rules: {
           required: [value => !!value || 'Este campo es requerido.'],
         }
       }
     },
-    created() {},
     mounted() {
-      setTimeout(() => {
-        this.atencion.hora = moment().format('HH:mm');
+      this.atencion = _.cloneDeep(this.$store.getters['atentions/get'])
+      if (!this.atencion.id) {
         this.atencion.fecha = moment().format('YYYY-MM-DD');
+        this.atencion.hora = moment().format('HH:mm');
         this.$forceUpdate()
-      }, 1000);
+      }
 
     },
     methods: {
       checkHandler() {
         if (!this.$refs.form.validate()) return
-        this.$emit('input', this.atencion)
+        this.$store.dispatch('atentions/setSingle',this.atencion)
         this.handler();
 
       },
@@ -152,12 +165,24 @@
       },
 
     },
+    computed:{
+      value() {
+        return this.$store.getters['atentions/get']
+      }
+    },
     watch: {
       value: {
         handler(newValue) {
-          this.atencion = newValue
+          this.atencion = _.cloneDeep(newValue)
         },
         deep: true
+      },
+      openModal(value) {
+        if (!this.atencion.id) {
+          this.atencion.fecha = moment().format('YYYY-MM-DD');
+          this.atencion.hora = moment().format('HH:mm');
+          this.$forceUpdate()
+        }
       }
     }
   }

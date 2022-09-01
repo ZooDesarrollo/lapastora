@@ -34,7 +34,8 @@
         </v-col>
 
         <v-col class="col-md-2">
-          <v-btn block height="40" color="gd-primary" @click="getAtenciones()" class="rounded-lg white--text font-weight-light">
+          <v-btn block height="40" color="gd-primary" @click="getAtenciones()"
+            class="rounded-lg white--text font-weight-light">
             Buscar&nbsp;<v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-col>
@@ -43,20 +44,22 @@
     <v-card-text>
       <v-card outlined class="rounded-xl">
         <v-card-text>
-          <v-data-table hide-default-footer :headers="headers" :items="atenciones">
-          <template v-slot:item.actions = "{ item }">
-            <slot name="button" :item="item"></slot>
-          </template>
+          <v-data-table hide-default-footer :headers="headers" :items="atenciones" :items-per-page="-1">
+            <template v-slot:item.actions="{ item }">
+              <slot name="button" :item="item"></slot>
+            </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </v-card-text>
+
+    <v-card-actions class="d-flex justify-center">
+      <v-pagination :total-visible="10" :length="Math.ceil(atenciones.length/25)" v-model="page"></v-pagination>
+    </v-card-actions>
   </v-card>
-
 </template>
-
-
 <script>
+  var qs = require('qs');
   import moment from 'moment'
   export default {
     data() {
@@ -92,13 +95,19 @@
             value: 'actions'
           }
         ],
-        atenciones:[],
+        atenciones: [],
         menu: false,
-        search: {}
+        search: {},
+        page: 1
       }
     },
     created() {
       this.getAtenciones()
+    },
+    mounted() {
+      this.$root.$on('generatedSale', () => {
+        this.getAtenciones()
+      })
     },
     methods: {
       formatDate(date) {
@@ -106,18 +115,55 @@
           return moment(date).format('DD/MM/YYYY')
         return "Seleccione una fecha"
       },
-      getAtenciones() {
-        var query = "estado=Pendiente"
-        if(this.search.search) {
-          query = `&_where[_or][0][socio.name_contains]=${this.search.search}&_where[_or][1][mascota.nombre_contains]=${this.search.search}`
+      async getAtenciones() {
+        var query = "estado=Pendiente&_sort:fecha:desc"
+        let params = {
+          estado: 'Pendiente',
+          _where: {
+            _or: []
+          }
         }
-        if(this.search.fecha) {
-          query = `${query}&_where[fecha]=${this.search.fecha}`
+        if (this.search.search) {
+          console.log(params._where._or)
+          params._where._or.push({
+            'socio.name_contains': this.search.search
+          })
+          params._where._or.push({
+            'mascota.nombre_contains': this.search.search
+          })
         }
-        this.$axios.get(`/atencion?${query}`)
-          .then((data) =>{
+        if (this.search.fecha) {
+          params._where = {
+            ...params._where,
+            fecha: this.search.fecha
+          }
+        } else {
+          params._where = {
+            ...params._where,
+            fecha: moment().format('YYYY-MM-DD')
+          }
+        }
+
+        await this.$axios.get(`/atencion`, {
+            params: {
+              ...params,
+              _sort: 'fecha:desc'
+            },
+            paramsSerializer: params => {
+              return qs.stringify(params, {
+                arrayFormat: 'brackets'
+              })
+            }
+          })
+          .then((data) => {
             this.atenciones = data.data
           })
+      },
+
+    },
+    watch: {
+      page() {
+        this.getAtenciones()
       }
 
     }

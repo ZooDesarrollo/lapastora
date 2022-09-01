@@ -20,7 +20,7 @@
     <v-card-text>
       <v-card outlined class="rounded-xl">
         <v-card-text>
-          <v-data-table hide-default-footer :headers="headers" :items="ventas">
+          <v-data-table hide-default-footer :headers="headers" :items="ventas" :items-per-page="-1">
             <template v-slot:item.cliente="{ item }">
               {{item.cliente.nombre}} {{item.cliente.nombre}}
             </template>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+  import moment from 'moment';
   export default {
     data() {
       return {
@@ -69,6 +70,11 @@
     created(){
       this.getVentas()
     },
+    mounted(){
+      this.$root.$on('generatedSale',()=>{
+        this.getVentas()
+      })
+    },
     methods: {
       checkTotal(productos) {
         return productos.reduce((a, b) => {
@@ -79,8 +85,12 @@
         if(this.search.codigo == '') {
           this.$delete(this.search,'codigo')
         }
+        this.search.fecha_lte = moment().format('YYYY-MM-DD')
         this.$axios.get('/ventas',{
-          params:this.search
+          params:{
+            ...this.search,
+            _sort:'fecha:desc'
+          }
         })
           .then(response => {
             this.ventas = response.data

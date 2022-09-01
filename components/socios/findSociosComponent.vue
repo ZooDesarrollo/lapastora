@@ -1,6 +1,6 @@
 <template>
     <v-autocomplete full-width class="font-weight-light" no-filter :hide-details="hideDetails" :items="socios" dense :loading="isLoading" :search-input.sync="search"
-      hide-no-data item-value="name" item-text="name" placeholder="Buscar socios..." outlined :rounded="rounded" background-color="white" v-model="result" 
+      hide-no-data item-value="name" item-text="name" placeholder="Buscar socios...(Nombre, direccion...)" outlined :rounded="rounded" background-color="white" v-model="result" 
       @keyup.enter="result = search">
       <template v-slot:append-outer v-if="icon">
         <v-slide-x-reverse-transition mode="out-in">
@@ -9,6 +9,9 @@
           </v-btn>
         </v-slide-x-reverse-transition>
       </template>
+    <template v-slot:item="data">
+      <b>Nombre:</b> {{data.item.name}} - <b>Direccion:</b> {{data.item.address}} 
+    </template>
     </v-autocomplete>
 </template>
 <script>

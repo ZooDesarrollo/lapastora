@@ -12,6 +12,11 @@
     </v-card-title>
     <v-card-text>
       <v-data-table :items="value.data" :headers="headers" :items-per-page="-1" hide-default-footer>
+        <template v-slot:item.name="{ item }" >
+          <router-link small block text :to="`/atencion/?socio=${item.id}`">
+            {{ item.name }}
+          </router-link>
+        </template>
         <template v-slot:item.payment_date="{ item }">
           {{formatDate(item.payment_date)}}
         </template>
@@ -49,7 +54,7 @@
             text: 'DNI',
             value: 'user.username'
           }, {
-            text: 'Ultima cuota paga',
+            text: 'Ultima mes cubierto',
             value: 'payment_date'
           },
           {
@@ -64,8 +69,8 @@
     },
     methods: {
       formatDate(date) {
-        if (date) {
-          return moment(date).format('DD/MM/YYYY')
+        if (date && date != '1000-01-01') {
+          return moment(date).format('MM/YYYY')
         } else {
           return 'Pago aun no realizado'
         }

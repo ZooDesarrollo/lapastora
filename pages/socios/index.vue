@@ -2,7 +2,21 @@
   <v-container fluid>
     <SociosListSociosComponent @changePage="getSocios($event)" v-model="sociosList">
       <template v-slot:extraFields>
-        <SociosFindSociosComponent v-model="search.name_contains"></SociosFindSociosComponent>
+        <v-row>
+          <v-col class="col-md-11 col-sm-10 col-12">
+            <SociosFindSociosComponent v-model="search.name_contains"></SociosFindSociosComponent>
+
+          </v-col>
+          <v-col class="col-md-1 col-sm-2 col-12">
+            <v-switch
+            class="mt-0"
+            hide-details
+      v-model="search.old_client"
+      default="false"
+      label="C. antiguo"
+    ></v-switch>
+          </v-col>
+        </v-row>
       </template>
       <template v-slot:buttonTitle>
         <v-btn to="/socios/registro" class="font-weight-light rounded-lg white--text" color="gd-primary-to-right">
@@ -19,6 +33,9 @@
         <v-btn class="gd-primary-to-right font-weight-light rounded-lg white--text" :to="`/socios/editar/${item.id}`"
           color="primary">
           EDITAR
+        </v-btn>
+        <v-btn class="font-weight-light rounded-lg white--text" color="red" @click="deleteSocio(item.id)">
+          ELIMINAR
         </v-btn>
       </template>
     </SociosListSociosComponent>
@@ -71,7 +88,10 @@
           months: 1,
           client: {}
         },
-        search: {},
+        search: {
+          _sort:'id:desc',
+          old_client: false
+        },
         sociosList: {
           data: [],
           length: 0
@@ -84,13 +104,14 @@
     },
     methods: {
       async getSocios(page = 1) {
-        this.search._start = (page - 1) * 25;
-        this.search._limit = page * 25;
+        let search = `?_start=${(page - 1) * 25}&_limit=${page * 25}&_sort=id:desc&old_client=${this.search.old_client}`;
         this.sociosList.data = []
         this.sociosList.length = 0
-        await this.$axios.get('/socios', {
-            params: this.search
-          })
+        console.log(search)
+        if(this.search.name_contains) {
+          search = `${search}&_where[_or][0][name_contains]=${this.search.name_contains}&_where[_or][1][last_name_contains]=${this.search.name_contains}&_where[_or][2][address_contains]=${this.search.name_contains}&_where[_or][3][user.username_contains]=${this.search.name_contains}`
+        }
+        await this.$axios.get('/socios' + search)
           .then(response => {
             this.sociosList.data = response.data
           })
@@ -99,6 +120,15 @@
           .then(response => {
             this.sociosList.length = response.data
           })
+      },
+      deleteSocio(id) {
+        let confirm = window.confirm('Esta seguro que desea eliminar este cliente?')
+        if (confirm) {
+          this.$axios.delete('/socios/' + id)
+            .then(response => {
+              this.getSocios()
+            })
+        }
       },
       payServices() {
         this.dataPayment.client.payment_date = moment(this.dataPayment.client.payment_date ?? new Date()).add(this.dataPayment.months, 'months').format('YYYY-MM-DD')

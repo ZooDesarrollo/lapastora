@@ -2,7 +2,8 @@
   <v-container fluid>
     <sociosFormComponent v-if="showForm" :handler="editSocio" v-model="socio"></sociosFormComponent>
     <modal-success :action="()=>{
-      this.createSocioModal = false
+      this.createSocioModal = false;
+      this.$router.go(-1);
       }" v-model="createSocioModal">
       <template v-slot:icon>
         mdi-check
@@ -45,6 +46,7 @@
             })
       },
       editSocio() {
+          this.$delete(this.socio,'published_at')
           this.$axios.put(`/socios/${this.socio.id}`, this.socio).then(response => {
             this.createSocioModal = true
           })

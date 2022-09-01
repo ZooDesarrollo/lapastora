@@ -2,7 +2,8 @@
   <v-container fluid>
     <mascotasFormComponent v-if="showForm" :handler="editMascota" v-model="mascota"></mascotasFormComponent>
     <modal-success :action="()=>{
-      this.createMascotaModal = false
+      this.createMascotaModal = false;
+      this.$router.go(-1)
       }" v-model="createMascotaModal">
       <template v-slot:icon>
         mdi-check
@@ -23,6 +24,7 @@
     data() {
       return {
         mascota: {
+          especie:{}
         },
         createMascotaModal: false,
         showForm: true

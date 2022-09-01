@@ -19,6 +19,7 @@
         <v-col class="col-md-3 col-12 mt-3" v-for="(file,index) in filesList" :key="`f${index}`">
           <v-card outlined class="rounded-lg">
             <v-card-title>
+              <span v-if="file.name">{{file.name}}</span>
               <v-spacer></v-spacer>
               <v-btn fab v-show="!readonly" x-small color="red" @click="deleteImg(file)">
                 <v-icon class="white--text">mdi-close</v-icon>
@@ -29,7 +30,7 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions style="height:55" v-show="file.url">
-              <v-btn block depressed :href="file.url" target="_blank" class="rounded-lg" color="success darken-1">
+              <v-btn block depressed :href="`https://api.zoodevelopment.net`+file.url" target="_blank" class="rounded-lg" color="success darken-1">
                 VER ARCHIVO&nbsp;
                 <v-icon>mdi-magnify</v-icon>
               </v-btn>

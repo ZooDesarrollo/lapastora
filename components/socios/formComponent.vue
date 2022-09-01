@@ -9,23 +9,23 @@
       <v-form ref="form">
         <v-row>
           <v-col class="col-md-12">
-            <v-text-field label="CLIENTE AGREGADO" hide-details :value="setValueCreatedAt(socio.created_at)" outlined dense class="rounded-lg"></v-text-field>
+            <v-text-field label="CLIENTE AGREGADO" :value="setValueCreatedAt(socio.created_at)" outlined
+              dense class="rounded-lg"></v-text-field>
+            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" hide-details outlined dense v-model="socio.name">
+            </v-text-field>
           </v-col>
           <v-col class="col-12 col-md-6">
-            <v-text-field label="NOMBRE SOCIO" class="rounded-lg" outlined dense
-              v-model="socio.name">
-            </v-text-field>
-            <v-text-field label="APELLIDO" class="rounded-lg" outlined dense
-              v-model="socio.last_name">
-            </v-text-field>
-            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense  
-              v-model="socio.user.username">
+            <v-text-field label="DOCUMENTO" type="number" class="rounded-lg" outlined dense
+              v-model="socio.doc">
             </v-text-field>
             <v-text-field label="DIRECCION" class="rounded-lg" outlined dense v-model="socio.address">
             </v-text-field>
+            <v-text-field label="DIRECCION COBRANZA  (Opcional)" v-model="socio.direccion_cobranza" class="rounded-lg"
+              outlined dense>
+            </v-text-field>
             <v-text-field label="LOCALIDAD" class="rounded-lg" outlined dense v-model="socio.localidad">
             </v-text-field>
-            <v-text-field label="RAZON SOCIAL (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" outlined
+            <v-text-field label="RUT (Opcional)" type="number" v-model="socio.rut" class="rounded-lg" outlined
               dense>
             </v-text-field>
             <v-select label="TIPO" :items="['Cliente final']" v-model="socio.tipo" class="rounded-lg" outlined dense>
@@ -33,9 +33,6 @@
 
           </v-col>
           <v-col class="col-12 col-md-6">
-            <v-text-field label="DIRECCION COBRANZA  (Opcional)" v-model="socio.direccion_cobranza" class="rounded-lg"
-              outlined dense>
-            </v-text-field>
             <v-text-field label="FECHA AFILIACION (Opcional)" type="date" v-model="socio.afiliacion" class="rounded-lg"
               outlined dense>
             </v-text-field>
@@ -43,15 +40,11 @@
             </v-select>
             <v-select label="SUCURSAL" :items="['CASA CENTRAL']" v-model="socio.suc" class="rounded-lg" outlined dense>
             </v-select>
-            <v-text-field label="TELEFONO" type="number" class="rounded-lg" outlined dense v-model="socio.phone">
+            <v-text-field label="TELEFONO" type="text" class="rounded-lg" outlined dense v-model="socio.phone">
             </v-text-field>
             <v-text-field label="CORREO  (Opcional)" type="email" class="rounded-lg" outlined dense
               v-model="socio.email">
             </v-text-field>
-
-            <v-text-field label="PASSWORD" class="rounded-lg" outlined dense v-model="socio.user.password">
-            </v-text-field>
-
           </v-col>
           <template v-if="socio.socio == 'Si'">
             <v-col class="col-md-6">
@@ -60,10 +53,16 @@
               </v-select>
             </v-col>
             <v-col class="col-md-6">
-              <v-select label="METODO DE PAGO" :items="['Mostrador','Automatico oca','Automatico (Otras)']" v-model="socio.metodo_pago"
-                class="rounded-lg" outlined dense :rules="rules.required">
+              <v-select label="METODO DE PAGO" :items="['Mostrador','Automatico oca','Automatico (Otras)']"
+                v-model="socio.metodo_pago" class="rounded-lg" outlined dense :rules="rules.required">
               </v-select>
             </v-col>
+            <v-col class="col-md-12" v-if="socio.metodo_pago == 'Automatico oca' || socio.metodo_pago == 'Automatico (Otras)'">
+              <v-text-field label="TARJETA"
+                v-model="socio.tarjeta" class="rounded-lg" outlined dense>
+              </v-text-field>
+            </v-col>
+
           </template>
           <v-col class="col-12 col-md-12">
             <v-card outlined dense class="rounded-xl">
@@ -80,32 +79,27 @@
                     </v-text-field>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="RAZA" class="rounded-lg" outlined dense
-                      v-model="socio.mascotas[index].raza">
-                    </v-text-field>
+                      <mascotasRazasComponent v-model="socio.mascotas[index].raza"></mascotasRazasComponent>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-text-field label="COLOR" class="rounded-lg" outlined dense
-                      v-model="socio.mascotas[index].color">
-                    </v-text-field>
+            <mascotasColoresComponent v-model="socio.mascotas[index].color"></mascotasColoresComponent>
                   </v-col>
                   <v-col class="col-12 col-md-12">
                     <v-text-field type="date" label="Fecha de nacimiento" class="rounded-lg" outlined dense
                       v-model="socio.mascotas[index].fecha_nac">
                     </v-text-field>
                   </v-col>
-
                   <v-col class="col-12 col-md-12">
                     <v-select label="SEXO" :items="[{
                       text:'Macho',
-                      value: 'Macho'
+                      value: 'M'
                     },{
                       text:'Hembra',
                       value: 'H'
                     },{
-                      text:'CASTRADO',
+                      text:'Indefinido',
                       value: 'C'
-                    }]" class="rounded-lg" outlined dense  v-model="socio.mascotas[index].sexo">
+                    }]" class="rounded-lg" outlined dense v-model="socio.mascotas[index].sexo">
                     </v-select>
                   </v-col>
                   <v-col class="col-12 col-md-12">
@@ -115,16 +109,16 @@
                     },{
                       text:'No',
                       value: 'No'
-                    }]" class="rounded-lg" outlined dense
-                      v-model="socio.mascotas[index].socio">
+                    }]" class="rounded-lg" outlined dense v-model="socio.mascotas[index].socio">
                     </v-select>
                   </v-col>
                   <v-col class="col-12">
-                    <sociosCreateEspeciesComponent v-model="socio.mascotas[index].especie"></sociosCreateEspeciesComponent>
+                    <sociosCreateEspeciesComponent v-model="socio.mascotas[index].especie">
+                    </sociosCreateEspeciesComponent>
                   </v-col>
                   <v-col class="col-12 col-md-12">
-                    <v-textarea label="Observaciones" class="rounded-lg" outlined dense 
-                    v-model="socio.mascotas[index].observaciones">
+                    <v-textarea label="Observaciones" class="rounded-lg" outlined dense
+                      v-model="socio.mascotas[index].observaciones">
                     </v-textarea>
                   </v-col>
 
@@ -166,7 +160,8 @@
   export default {
     props: {
       value: Object,
-      handler: Function
+      handler: Function,
+      openModal: false
     },
     data() {
       return {
@@ -182,7 +177,9 @@
     },
     methods: {
       addMascota() {
-        this.$set(this.socio.mascotas, this.socio.mascotas.length, {});
+        this.$set(this.socio.mascotas, this.socio.mascotas.length, {
+          color:{},especie:{},raza:{}
+        });
       },
       deleteMascota() {
         this.$delete(this.socio.mascotas, this.socio.mascotas.length - 1);
@@ -209,7 +206,20 @@
       }
 
     },
-    watch: {},
+    watch: {
+      openModal() {
+        if (this.openModal) {
+          this.socio = {
+            suc: 'CASA CENTRAL',
+            socio: 'SI',
+            tipo: 'Cliente final',
+            user: {},
+            mascotas: [{}],
+            afiliacion: moment().format('YYYY-MM-DD'),
+          }
+        }
+      }
+    },
   }
 
 </script>

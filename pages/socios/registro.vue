@@ -4,7 +4,8 @@
       Nuevo cliente
     </sociosFormComponent>
     <modal-success :action="()=>{
-      this.createSocioModal = false
+      this.createSocioModal = false;
+      this.$router.go(-1)
       }" v-model="createSocioModal">
       <template v-slot:icon>
         mdi-check
@@ -30,7 +31,9 @@
           socio:'SI',
           tipo:'Cliente final',
           user:{},
-          mascotas: [{}],
+          mascotas: [{
+            especie:{}
+          }],
           afiliacion:moment().format('YYYY-MM-DD'),
         },
         createSocioModal: false

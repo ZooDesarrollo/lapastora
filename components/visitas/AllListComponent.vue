@@ -32,14 +32,14 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-data-table :headers="headers" hide-default-footer :items="items.data">
+        <v-data-table :headers="headers" hide-default-footer :items="items.data" :items-per-page="25">
           <template v-slot:item.fecha="{ item }">
               <v-btn outlined small @click="showModalAtencion(item)">
                 <v-icon>mdi-magnify</v-icon> &nbsp;{{formatDate(item.fecha)}}
               </v-btn>
           </template>
-          <template v-slot:item.socio.name="{ item }">
-            {{item.socio.name}} {{item.socio.last_name}}
+          <template v-slot:item.clientName="{ item }">
+            {{clientName(item.mascota)}}
           </template>
 
           <template v-slot:item.hora="{ item }">
@@ -83,6 +83,9 @@
           text: "EOG",
           value: "EOG"
         }, {
+          text: "Nombre del cliente",
+          value: "mascota.socio.name"
+        }, {
           text: "Nombre de la mascota",
           value: "mascota.nombre"
         }, {
@@ -91,9 +94,6 @@
         }, {
           text: "Anamnesis",
           value: "anamnesis"
-        }, {
-          text: "Pronostico",
-          value: "pronostico"
         }, {
           text: "Tratamiento",
           value: "tratamiento"
@@ -112,7 +112,7 @@
           value: "hora"
         }, {
           text: "Nombre del cliente",
-          value: "socio.name"
+          value: "mascota.socio.name"
         }, {
           text: "Nombre de la mascota",
           value: "mascota.nombre"
@@ -135,7 +135,7 @@
         this.search._limit = 25*(this.items.page)
         this.items.data = []
         await this.$axios.get('/atencion', {
-            params: this.search
+            params: {...this.search,_sort:'fecha:desc'}
           })
           .then(response => {
             this.items.data = response.data
@@ -163,9 +163,14 @@
         let finalHour = hour.split(':')
         return `${finalHour[0]}:${finalHour[1]}`
       },
-      showModalAtencion(value) {
-        this.atencion = value
+      showModalAtencion(atencion) {
+        this.$store.dispatch('atentions/setSingle', atencion)
         this.openAtencionModal = true
+      },
+      clientName(pet){
+        if(pet.socios){
+          return pet.socios[0].name
+        }
       },
       exportData() {
         console.log(this.items)
@@ -197,7 +202,8 @@
           return {
             Fecha: this.formatDate(item.fecha),
             Hora: this.formatHour(item.hora),
-            Cliente: `${item.socio.name} ${item.socio.last_name}`,
+            Cliente: `${item.socio.name}`,
+            Telefono: `${item.socio.phone}`,
             Mascota: item.mascota.nombre,
             Motivo: item.referencias?.nombre,
           }
