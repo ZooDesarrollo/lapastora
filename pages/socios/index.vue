@@ -76,7 +76,6 @@
         },
         search: {
           _sort:'id:desc',
-          old_client: false
         },
         sociosList: {
           data: [],
@@ -90,7 +89,7 @@
     },
     methods: {
       async getSocios(page = 1) {
-        let search = `?_start=${(page - 1) * 25}&_limit=${page * 25}&_sort=id:desc&old_client=${this.search.old_client}`;
+        let search = `?_start=${(page - 1) * 25}&_limit=${page * 25}&_sort=id:desc`;
         this.sociosList.data = []
         this.sociosList.length = 0
         console.log(search)
